@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sistem Manajemen Risiko SPBE Desa">
+    <title>{{ $title ?? 'Login' }} — SPBE Desa</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="min-h-screen bg-slate-900 flex items-center justify-center p-4 antialiased">
+    {{-- Subtle gradient background --}}
+    <div class="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+    <div class="fixed inset-0 opacity-30" style="background-image: radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);"></div>
+
+    <div class="relative z-10 w-full max-w-md">
+        {{-- Logo / Branding --}}
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/25 mb-4">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-white">SPBE Desa</h1>
+            <p class="text-slate-400 text-sm mt-1">Sistem Pemerintahan Berbasis Elektronik</p>
+        </div>
+
+        {{ $slot }}
+    </div>
+</body>
+</html>
