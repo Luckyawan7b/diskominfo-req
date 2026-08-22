@@ -17,15 +17,18 @@ class RisikoForm extends Component
     public int $activeTab = 1;
 
     // Tab 1: Identifikasi
+    public int $no = 1;
     public ?int $mr_sasaran_upr_id = null;
+    public ?string $indikator_kinerja_snapshot = null;
     public string $kode_risiko = '';
     public string $peristiwa_risiko = '';
     public string $penyebab = '';
-    public string $dampak_risiko = '';
+    public string $dampak = '';
     public ?int $ref_kategori_risiko_id = null;
     public string $area_dampak = '';
 
     // Tab 2: Analisis
+
     public ?int $level_kemungkinan = null;
     public ?int $level_dampak = null;
 
@@ -38,6 +41,7 @@ class RisikoForm extends Component
     // Tab 4: Residual
     public ?int $level_kemungkinan_residual = null;
     public ?int $level_dampak_residual = null;
+    public string $keterangan_residual = '';
 
     // Tab 5: Kolom Tambahan (Bagian E)
     public string $layanan_pendukung = '';
@@ -60,12 +64,16 @@ class RisikoForm extends Component
         if ($risiko instanceof MrRisiko) {
             $this->risikoModel = $risiko->loadMissing(['perlakuan', 'residual', 'kolomTambahan', 'layananDigital']);
             $this->fillFromRisiko();
+            // Get the position/index of this risk in the current context
+            $this->no = $konteks->risiko()->where('id', '<=', $this->risikoModel->id)->count();
         } elseif ($risiko && $risiko !== 'new') {
             $this->risikoModel = MrRisiko::with(['perlakuan', 'residual', 'kolomTambahan', 'layananDigital'])->findOrFail($risiko);
             $this->fillFromRisiko();
+            $this->no = $konteks->risiko()->where('id', '<=', $this->risikoModel->id)->count();
         } else {
             $this->isNew = true;
             $count = $konteks->risiko()->count();
+            $this->no = $count + 1;
             $desa = $konteks->desa;
             $this->kode_risiko = ($desa->kode_desa ?? 'DSA') . '-R-' . ($count + 1);
         }
@@ -75,10 +83,11 @@ class RisikoForm extends Component
     {
         $r = $this->risikoModel;
         $this->mr_sasaran_upr_id      = $r->mr_sasaran_upr_id;
+        $this->indikator_kinerja_snapshot = $r->indikator_kinerja_snapshot ?? '';
         $this->kode_risiko            = $r->kode_risiko ?? '';
         $this->peristiwa_risiko       = $r->peristiwa_risiko ?? '';
         $this->penyebab               = $r->penyebab ?? '';
-        $this->dampak_risiko          = $r->dampak_risiko ?? '';
+        $this->dampak                 = $r->dampak ?? '';
         $this->ref_kategori_risiko_id = $r->ref_kategori_risiko_id;
         $this->area_dampak            = $r->area_dampak ?? '';
         $this->level_kemungkinan      = $r->level_kemungkinan;
@@ -89,6 +98,7 @@ class RisikoForm extends Component
         $this->penanggung_jawab            = $r->perlakuan?->penanggung_jawab ?? '';
         $this->level_kemungkinan_residual  = $r->residual?->level_kemungkinan;
         $this->level_dampak_residual       = $r->residual?->level_dampak;
+        $this->keterangan_residual         = $r->residual?->keterangan_residual ?? '';
 
         // Kolom Tambahan
         if ($r->kolomTambahan) {
@@ -109,6 +119,11 @@ class RisikoForm extends Component
         }
     }
 
+    public function updatedMrSasaranUprId($value)
+    {
+        $this->indikator_kinerja_snapshot = null;
+    }
+
     public function save(): void
     {
         $this->validate([
@@ -120,10 +135,11 @@ class RisikoForm extends Component
         $data = [
             'mr_konteks_id'          => $this->konteks->id,
             'mr_sasaran_upr_id'      => $this->mr_sasaran_upr_id,
+            'indikator_kinerja_snapshot' => $this->indikator_kinerja_snapshot,
             'kode_risiko'            => $this->kode_risiko,
             'peristiwa_risiko'       => $this->peristiwa_risiko,
             'penyebab'               => $this->penyebab,
-            'dampak_risiko'          => $this->dampak_risiko,
+            'dampak'                 => $this->dampak,
             'ref_kategori_risiko_id' => $this->ref_kategori_risiko_id,
             'area_dampak'            => $this->area_dampak ?: null,
             'level_kemungkinan'      => $this->level_kemungkinan,
@@ -148,13 +164,18 @@ class RisikoForm extends Component
             ]);
         }
 
-        // Residual (Tab 4)
-        if ($this->level_kemungkinan_residual && $this->level_dampak_residual) {
+        // Residual (Tab 4 & Tab 5)
+        if ($this->level_kemungkinan_residual || $this->level_dampak_residual || $this->keterangan_residual) {
             $calc = app(RiskMatrixCalculator::class);
+            $besaranRes = ($this->level_kemungkinan_residual && $this->level_dampak_residual)
+                ? $calc->calculate($this->level_kemungkinan_residual, $this->level_dampak_residual)
+                : null;
+
             $this->risikoModel->residual()->updateOrCreate([], [
-                'level_kemungkinan'  => $this->level_kemungkinan_residual,
-                'level_dampak'       => $this->level_dampak_residual,
-                'besaran_risiko'     => $calc->calculate($this->level_kemungkinan_residual, $this->level_dampak_residual),
+                'level_kemungkinan'   => $this->level_kemungkinan_residual,
+                'level_dampak'        => $this->level_dampak_residual,
+                'besaran_risiko'      => $besaranRes,
+                'keterangan_residual' => $this->keterangan_residual ?: null,
             ]);
         }
 
@@ -190,9 +211,21 @@ class RisikoForm extends Component
         $besaran = ($this->level_kemungkinan && $this->level_dampak) ? $calc->calculate($this->level_kemungkinan, $this->level_dampak) : null;
         $besaranResidual = ($this->level_kemungkinan_residual && $this->level_dampak_residual) ? $calc->calculate($this->level_kemungkinan_residual, $this->level_dampak_residual) : null;
 
+        $sasaranNasionalText = null;
+        $indikatorList = collect();
+        if ($this->mr_sasaran_upr_id) {
+            $sasaranUpr = \App\Models\MrSasaranUpr::with(['sasaranNasional', 'indikator'])->find($this->mr_sasaran_upr_id);
+            if ($sasaranUpr) {
+                $sasaranNasionalText = $sasaranUpr->sasaranNasional?->teks_sasaran;
+                $indikatorList = $sasaranUpr->indikator;
+            }
+        }
+
         return view('livewire.risiko.form', [
             'kategoriList' => RefKategoriRisiko::orderBy('id')->get(),
             'sasaranList'  => $this->konteks->sasaranUpr()->orderBy('urutan')->get(),
+            'indikatorList' => $indikatorList,
+            'sasaranNasionalText' => $sasaranNasionalText,
             'besaran'      => $besaran,
             'besaranLabel' => $besaran ? $calc->label($besaran) : null,
             'besaranResidual' => $besaranResidual,

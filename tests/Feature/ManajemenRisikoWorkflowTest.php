@@ -100,7 +100,7 @@ class ManajemenRisikoWorkflowTest extends TestCase
         // 3. Fill Sasaran F2
         Livewire::test(SasaranForm::class, ['konteks' => $konteks])
             ->call('addBlock')
-            ->set('blocks.0.sasaran_nasional_baru', 'Sasaran Nasional Test')
+            ->set('blocks.0.sasaran_nasional', 'Sasaran Nasional Test')
             ->set('blocks.0.sasaran_upr', 'Meningkatkan kualitas data desa online')
             ->set('blocks.0.indikator.0.indikator_kinerja', 'Persentase update data per bulan')
             ->set('blocks.0.indikator.0.target_kinerja', '100%')
@@ -130,7 +130,7 @@ class ManajemenRisikoWorkflowTest extends TestCase
             ->set('kode_risiko', 'SKM-R-01')
             ->set('peristiwa_risiko', 'Server website desa mengalami downtime saat jam kerja')
             ->set('penyebab', 'Koneksi internet desa terputus dan tidak ada backup')
-            ->set('dampak_risiko', 'Pelayanan surat menyurat warga tertunda')
+            ->set('dampak', 'Pelayanan surat menyurat warga tertunda')
             ->set('level_kemungkinan', 4)
             ->set('level_dampak', 3)
             ->set('keputusan_perlakuan', 'Mengurangi risiko')

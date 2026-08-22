@@ -17,41 +17,28 @@ class SasaranForm extends Component
     /**
      * Daftar blok Sasaran UPR. Tiap blok:
      * [
-     *   'id', 'ref_sasaran_nasional_id', 'sasaran_nasional_baru', 'sasaran_upr',
+     *   'id', 'sasaran_nasional', 'sasaran_upr',
      *   'indikator' => [ ['id','indikator_kinerja','target_kinerja'], ... ]
      * ]
      */
     public array $blocks = [];
 
-    /** Opsi dropdown Sasaran Pembangunan Nasional yang sudah pernah dipakai (di seluruh instansi) */
-    public array $sasaranNasionalOptions = [];
-
     public function mount(MrKonteks $konteks): void
     {
         $this->konteks = $konteks;
-        $this->loadOptions();
         $this->loadBlocks();
-    }
-
-    public function loadOptions(): void
-    {
-        $this->sasaranNasionalOptions = RefSasaranNasional::orderBy('teks_sasaran')
-            ->get(['id', 'teks_sasaran'])
-            ->map(fn ($r) => ['id' => $r->id, 'teks' => $r->teks_sasaran])
-            ->toArray();
     }
 
     public function loadBlocks(): void
     {
         $this->blocks = $this->konteks->sasaranUpr()
-            ->with('indikator')
+            ->with(['indikator', 'sasaranNasional'])
             ->orderBy('urutan')
             ->get()
             ->map(fn (MrSasaranUpr $upr) => [
-                'id'                      => $upr->id,
-                'ref_sasaran_nasional_id' => $upr->ref_sasaran_nasional_id,
-                'sasaran_nasional_baru'   => '',
-                'sasaran_upr'             => $upr->sasaran_upr,
+                'id'               => $upr->id,
+                'sasaran_nasional' => $upr->sasaranNasional?->teks_sasaran ?? '',
+                'sasaran_upr'      => $upr->sasaran_upr,
                 'indikator' => $upr->indikator->map(fn (MrIndikatorKinerja $ind) => [
                     'id'                => $ind->id,
                     'indikator_kinerja' => $ind->indikator_kinerja ?? '',
@@ -75,10 +62,9 @@ class SasaranForm extends Component
         ]);
 
         $this->blocks[] = [
-            'id' => $upr->id,
-            'ref_sasaran_nasional_id' => null,
-            'sasaran_nasional_baru'   => '',
-            'sasaran_upr'             => '',
+            'id'               => $upr->id,
+            'sasaran_nasional' => '',
+            'sasaran_upr'      => '',
             'indikator' => [
                 [
                     'id'                => $newInd->id,
@@ -111,20 +97,12 @@ class SasaranForm extends Component
             return;
         }
 
-        $refId = $block['ref_sasaran_nasional_id'] ?: null;
-
-        // Jika operator tidak memilih dari dropdown tapi mengetik kalimat baru,
-        // buatkan referensinya (atau pakai yang sudah ada kalau persis sama).
-        if (! $refId && filled($block['sasaran_nasional_baru'] ?? null)) {
+        $refId = null;
+        if (filled($block['sasaran_nasional'] ?? null)) {
             $ref = RefSasaranNasional::firstOrCreate([
-                'teks_sasaran' => mb_substr(trim($block['sasaran_nasional_baru']), 0, 500),
+                'teks_sasaran' => mb_substr(trim($block['sasaran_nasional']), 0, 500),
             ]);
             $refId = $ref->id;
-            
-            $this->blocks[$index]['ref_sasaran_nasional_id'] = $refId;
-            $this->blocks[$index]['sasaran_nasional_baru'] = '';
-            
-            $this->loadOptions();
         }
 
         MrSasaranUpr::find($block['id'])?->update([
