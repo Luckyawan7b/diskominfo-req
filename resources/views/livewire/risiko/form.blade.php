@@ -20,6 +20,8 @@
         </div>
     </div>
 
+    <x-risk-wizard :konteks="$konteks" activeStep="Risiko" />
+
     {{-- Tabs Header --}}
     <div class="flex border-b border-slate-700/50 space-x-2 overflow-x-auto mb-6">
         @php
@@ -56,7 +58,7 @@
 
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1.5">Sasaran UPR Terkait</label>
-                    <select wire:model="mr_sasaran_id" {{ !$isEditable ? 'disabled' : '' }}
+                    <select wire:model="mr_sasaran_upr_id" {{ !$isEditable ? 'disabled' : '' }}
                         class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-50">
                         <option value="">-- Pilih Sasaran UPR --</option>
                         @foreach($sasaranList as $s)
@@ -68,25 +70,22 @@
 
             <div>
                 <label class="block text-sm font-medium text-slate-300 mb-1.5">Peristiwa Risiko <span class="text-red-400">*</span></label>
-                <textarea wire:model="peristiwa_risiko" rows="3" {{ !$isEditable ? 'disabled' : '' }}
-                    class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-50"
-                    placeholder="Deskripsi kejadian atau peristiwa risiko"></textarea>
+                <x-textarea-auto wire:model="peristiwa_risiko" rows="3" :disabled="!$isEditable"
+                    placeholder="Deskripsi kejadian atau peristiwa risiko" />
                 @error('peristiwa_risiko') <p class="mt-1 text-sm text-red-400">{{ $message }}</p> @enderror
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1.5">Penyebab / Akar Masalah</label>
-                    <textarea wire:model="penyebab" rows="3" {{ !$isEditable ? 'disabled' : '' }}
-                        class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-50"
-                        placeholder="Faktor penyebab timbulnya risiko"></textarea>
+                    <x-textarea-auto wire:model="penyebab" rows="3" :disabled="!$isEditable"
+                        placeholder="Faktor penyebab timbulnya risiko" />
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1.5">Dampak Risiko</label>
-                    <textarea wire:model="dampak_risiko" rows="3" {{ !$isEditable ? 'disabled' : '' }}
-                        class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-50"
-                        placeholder="Akibat yang ditimbulkan jika risiko terjadi"></textarea>
+                    <x-textarea-auto wire:model="dampak_risiko" rows="3" :disabled="!$isEditable"
+                        placeholder="Akibat yang ditimbulkan jika risiko terjadi" />
                 </div>
             </div>
 
@@ -227,9 +226,8 @@
 
             <div>
                 <label class="block text-sm font-medium text-slate-300 mb-1.5">Deskripsi Rencana Tindak Pengendalian</label>
-                <textarea wire:model="deskripsi_detail_perlakuan" rows="3" {{ !$isEditable ? 'disabled' : '' }}
-                    class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-50"
-                    placeholder="Langkah-langkah mitigasi / pengendalian risiko"></textarea>
+                <x-textarea-auto wire:model="deskripsi_detail_perlakuan" rows="3" :disabled="!$isEditable"
+                    placeholder="Langkah-langkah mitigasi / pengendalian risiko" />
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -372,9 +370,8 @@
 
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1.5">IPPD Terkait (Instansi Pusat / Pemda)</label>
-                    <textarea wire:model="ippd_terkait" rows="3" {{ !$isEditable ? 'disabled' : '' }}
-                        class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-50"
-                        placeholder="Nama-nama IPPD terkait"></textarea>
+                    <x-textarea-auto wire:model="ippd_terkait" rows="3" :disabled="!$isEditable"
+                        placeholder="Nama-nama IPPD terkait" />
                 </div>
             </div>
 

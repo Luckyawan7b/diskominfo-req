@@ -43,9 +43,9 @@ class MrKonteks extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function sasaran(): HasMany
+    public function sasaranUpr(): HasMany
     {
-        return $this->hasMany(MrSasaran::class);
+        return $this->hasMany(MrSasaranUpr::class, 'mr_konteks_id')->orderBy('urutan');
     }
 
     public function strukturPelaksana(): HasOne

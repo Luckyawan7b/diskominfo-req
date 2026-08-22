@@ -17,7 +17,7 @@ class MrRisiko extends Model
 
     protected $fillable = [
         'mr_konteks_id',
-        'mr_sasaran_id',
+        'mr_sasaran_upr_id',
         'sasaran_pembangunan_nasional_snapshot',
         'sasaran_upr_snapshot',
         'indikator_kinerja_snapshot',
@@ -52,7 +52,7 @@ class MrRisiko extends Model
 
     public function sasaran(): BelongsTo
     {
-        return $this->belongsTo(MrSasaran::class, 'mr_sasaran_id');
+        return $this->belongsTo(MrSasaranUpr::class, 'mr_sasaran_upr_id');
     }
 
     public function kategoriRisiko(): BelongsTo

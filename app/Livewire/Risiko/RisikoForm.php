@@ -17,7 +17,7 @@ class RisikoForm extends Component
     public int $activeTab = 1;
 
     // Tab 1: Identifikasi
-    public ?int $mr_sasaran_id = null;
+    public ?int $mr_sasaran_upr_id = null;
     public string $kode_risiko = '';
     public string $peristiwa_risiko = '';
     public string $penyebab = '';
@@ -74,7 +74,7 @@ class RisikoForm extends Component
     private function fillFromRisiko(): void
     {
         $r = $this->risikoModel;
-        $this->mr_sasaran_id          = $r->mr_sasaran_id;
+        $this->mr_sasaran_upr_id      = $r->mr_sasaran_upr_id;
         $this->kode_risiko            = $r->kode_risiko ?? '';
         $this->peristiwa_risiko       = $r->peristiwa_risiko ?? '';
         $this->penyebab               = $r->penyebab ?? '';
@@ -119,7 +119,7 @@ class RisikoForm extends Component
 
         $data = [
             'mr_konteks_id'          => $this->konteks->id,
-            'mr_sasaran_id'          => $this->mr_sasaran_id,
+            'mr_sasaran_upr_id'      => $this->mr_sasaran_upr_id,
             'kode_risiko'            => $this->kode_risiko,
             'peristiwa_risiko'       => $this->peristiwa_risiko,
             'penyebab'               => $this->penyebab,
@@ -192,7 +192,7 @@ class RisikoForm extends Component
 
         return view('livewire.risiko.form', [
             'kategoriList' => RefKategoriRisiko::orderBy('id')->get(),
-            'sasaranList'  => $this->konteks->sasaran()->orderBy('urutan')->get(),
+            'sasaranList'  => $this->konteks->sasaranUpr()->orderBy('urutan')->get(),
             'besaran'      => $besaran,
             'besaranLabel' => $besaran ? $calc->label($besaran) : null,
             'besaranResidual' => $besaranResidual,

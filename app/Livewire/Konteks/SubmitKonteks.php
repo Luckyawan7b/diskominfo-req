@@ -32,7 +32,7 @@ class SubmitKonteks extends Component
         }
 
         // Cek Sasaran UPR
-        if ($this->konteks->sasaran()->count() === 0) {
+        if ($this->konteks->sasaranUpr()->count() === 0) {
             $this->validationErrors[] = 'Belum ada Sasaran UPR yang diinput (Formulir 2).';
         }
 

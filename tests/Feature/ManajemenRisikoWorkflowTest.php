@@ -99,14 +99,15 @@ class ManajemenRisikoWorkflowTest extends TestCase
 
         // 3. Fill Sasaran F2
         Livewire::test(SasaranForm::class, ['konteks' => $konteks])
-            ->call('addRow')
-            ->set('rows.0.sasaran_upr', 'Meningkatkan kualitas data desa online')
-            ->set('rows.0.indikator_kinerja', 'Persentase update data per bulan')
-            ->set('rows.0.target_kinerja', '100%')
-            ->call('saveRow', 0)
+            ->call('addBlock')
+            ->set('blocks.0.sasaran_nasional_baru', 'Sasaran Nasional Test')
+            ->set('blocks.0.sasaran_upr', 'Meningkatkan kualitas data desa online')
+            ->set('blocks.0.indikator.0.indikator_kinerja', 'Persentase update data per bulan')
+            ->set('blocks.0.indikator.0.target_kinerja', '100%')
+            ->call('saveBlock', 0)
             ->assertHasNoErrors();
 
-        $this->assertDatabaseHas('mr_sasaran', [
+        $this->assertDatabaseHas('mr_sasaran_upr', [
             'mr_konteks_id' => $konteks->id,
             'sasaran_upr'   => 'Meningkatkan kualitas data desa online',
         ]);
