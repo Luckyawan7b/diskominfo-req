@@ -17,7 +17,7 @@ class PemantauanForm extends Component
     public MrKonteks $konteks;
     public ?int $selectedRisikoId = null;
 
-    public string $periode = 'Semester 1';
+    public string $periode = 'semester_1';
     public int $tahun = 2026;
     public string $hasil_pelaksanaan = '';
     public string $data_dukung_catatan = '';

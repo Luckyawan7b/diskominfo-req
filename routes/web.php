@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/sasaran', SasaranForm::class)->name('sasaran.form');
             Route::get('/struktur', StrukturPelaksanaForm::class)->name('struktur.form');
             Route::get('/risiko', RisikoIndex::class)->name('risiko.index');
+            Route::get('/layanan-digital', \App\Livewire\LayananDigital\LayananDigitalIndex::class)->name('layanan-digital.index');
             Route::get('/risiko/{risiko}', RisikoForm::class)->name('risiko.form');
             Route::get('/peta-risiko', PetaRisiko::class)->name('risiko.peta');
             Route::get('/pemantauan', PemantauanForm::class)->name('pemantauan.form');

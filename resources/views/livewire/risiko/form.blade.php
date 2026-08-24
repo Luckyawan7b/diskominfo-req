@@ -552,27 +552,15 @@
 
             {{-- Layanan Digital conditional fields --}}
             @if($layanan_prioritas === 'Prioritas')
-                <div class="p-5 rounded-xl border border-emerald-500/30 bg-emerald-950/20 space-y-4">
-                    <h3 class="text-sm font-semibold text-emerald-400 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        Layanan Digital Prioritas (Formulir Khusus Layanan Digital)
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="flex items-center">
-                            <label class="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
-                                <input type="checkbox" wire:model="perlu_mkb" {{ !$isEditable ? 'disabled' : '' }} class="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-500">
-                                <span>Perlu Manajemen Keberlangsungan (MKB)</span>
-                            </label>
-                        </div>
+                <div class="p-5 rounded-xl border border-emerald-500/30 bg-emerald-950/20">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-emerald-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">PIC Layanan Digital</label>
-                            <input wire:model="pic" type="text" {{ !$isEditable ? 'disabled' : '' }}
-                                class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Target Waktu Penyusunan</label>
-                            <input wire:model="target_waktu_penyusunan" type="text" {{ !$isEditable ? 'disabled' : '' }}
-                                class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <h3 class="text-sm font-semibold text-emerald-400">Layanan Digital Prioritas (Formulir Khusus)</h3>
+                            <p class="text-xs text-slate-300 mt-1">
+                                Risiko ini akan muncul di <strong>Formulir 2.0 — Daftar Layanan Digital Prioritas</strong>.
+                                Silakan lengkapi data MKB, PIC, dan Target Waktu Penyusunan pada formulir tersebut.
+                            </p>
                         </div>
                     </div>
                 </div>

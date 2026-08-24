@@ -12,6 +12,9 @@
         </div>
     </div>
 
+    {{-- Wizard Navigasi --}}
+    <x-risk-wizard :konteks="$konteks" activeStep="Pemantauan" />
+
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {{-- Left: Risk Selector --}}
         <div class="lg:col-span-4 rounded-xl border border-slate-700/50 bg-slate-800/50 p-5">
@@ -37,12 +40,43 @@
             @if($selectedRisiko)
                 {{-- Detail Risiko Mini Card --}}
                 <div class="rounded-xl border border-slate-700 bg-slate-800/80 p-5">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">{{ $selectedRisiko->kode_risiko }}</span>
-                        <span class="text-xs text-slate-400">Rencana: <strong class="text-slate-200">{{ $selectedRisiko->perlakuan?->keputusan_perlakuan ?? 'Belum ada' }}</strong></span>
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2 border-b border-slate-700/50 pb-3">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">{{ $selectedRisiko->kode_risiko }}</span>
+                            <span class="text-xs text-slate-300">Level Saat Ini: <strong class="text-white">{{ $selectedRisiko->besaran_risiko ?? '-' }}</strong></span>
+                            @php
+                                $proyeksi = $selectedRisiko->residual?->besaran_risiko;
+                                $lblProyeksi = $proyeksi ? app(\App\Services\RiskMatrixCalculator::class)->label($proyeksi) : null;
+                                $clsProyeksi = match($lblProyeksi) {
+                                    'Rendah' => 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+                                    'Sedang' => 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+                                    'Tinggi' => 'bg-orange-500/10 text-orange-400 border-orange-500/30',
+                                    'Sangat Tinggi' => 'bg-red-500/10 text-red-400 border-red-500/30',
+                                    default => 'bg-slate-700 text-slate-400',
+                                };
+                            @endphp
+                            <span class="text-xs text-slate-300 flex items-center gap-2 border-l border-slate-600 pl-3">
+                                Proyeksi (Residual): 
+                                @if($proyeksi)
+                                    <span class="px-2 py-0.5 rounded border text-[10px] font-bold {{ $clsProyeksi }}">{{ $proyeksi }} - {{ $lblProyeksi }}</span>
+                                @else
+                                    <span class="text-[10px] text-amber-400 italic">Belum disetel di Formulir 1.0</span>
+                                @endif
+                            </span>
+                        </div>
+                        <span class="text-[11px] text-slate-400">Keputusan Perlakuan: <strong class="text-slate-200">{{ $selectedRisiko->perlakuan?->keputusan_perlakuan ?? 'Belum ada' }}</strong></span>
                     </div>
-                    <h4 class="text-sm font-semibold text-white mb-1">{{ $selectedRisiko->peristiwa_risiko }}</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed">{{ $selectedRisiko->perlakuan?->deskripsi_detail_perlakuan ?? 'Belum ada deskripsi rencana mitigasi.' }}</p>
+                    <h4 class="text-sm font-semibold text-white mb-2">{{ $selectedRisiko->peristiwa_risiko }}</h4>
+                    <div class="bg-slate-900/50 rounded-lg p-3 border border-slate-700/50">
+                        <span class="block text-[10px] uppercase text-slate-500 font-semibold mb-1">Rencana Penanganan / Mitigasi</span>
+                        <p class="text-xs text-slate-300 leading-relaxed">{{ $selectedRisiko->perlakuan?->deskripsi_detail_perlakuan ?? 'Belum ada deskripsi rencana mitigasi.' }}</p>
+                        @if($selectedRisiko->perlakuan?->penanggung_jawab)
+                            <div class="mt-2 text-[11px] text-slate-400 flex items-center gap-4">
+                                <span><strong class="text-slate-300">PIC:</strong> {{ $selectedRisiko->perlakuan->penanggung_jawab }}</span>
+                                <span><strong class="text-slate-300">Waktu:</strong> {{ $selectedRisiko->perlakuan->waktu_rencana_perlakuan ?? '-' }}</span>
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
                 {{-- Form Tambah Pemantauan --}}
@@ -58,9 +92,8 @@
                                 <div>
                                     <label class="block text-xs font-medium text-slate-300 mb-1">Periode Pemantauan</label>
                                     <select wire:model="periode" class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                                        <option value="Semester 1">Semester 1 (Jan - Jun)</option>
-                                        <option value="Semester 2">Semester 2 (Jul - Des)</option>
-                                        <option value="Tahunan">Tahunan</option>
+                                        <option value="semester_1">Semester 1 (Jan - Jun)</option>
+                                        <option value="semester_2">Semester 2 (Jul - Des)</option>
                                     </select>
                                 </div>
                                 <div>
@@ -102,7 +135,7 @@
                         @forelse($pemantauanList as $p)
                             <div class="p-4 rounded-lg border border-slate-700 bg-slate-900/40 space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-xs font-semibold text-emerald-400">{{ $p->periode }} {{ $p->tahun }}</span>
+                                    <span class="text-xs font-semibold text-emerald-400">{{ $p->periode === 'semester_1' ? 'Semester 1' : 'Semester 2' }} {{ $p->tahun }}</span>
                                     <div class="flex items-center gap-2">
                                         <span class="text-[11px] text-slate-500">{{ $p->created_at->format('d M Y') }}</span>
                                         @if($isEditable)

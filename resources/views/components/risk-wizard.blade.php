@@ -7,7 +7,9 @@
             ['label' => 'Sasaran', 'route' => route('sasaran.form', $konteks)],
             ['label' => 'Struktur', 'route' => route('struktur.form', $konteks)],
             ['label' => 'Risiko', 'route' => route('risiko.index', $konteks)],
+            ['label' => 'Layanan Digital', 'route' => route('layanan-digital.index', $konteks)],
             ['label' => 'Peta Risiko', 'route' => route('risiko.peta', $konteks)],
+            ['label' => 'Pemantauan', 'route' => route('pemantauan.form', $konteks)],
         ];
     @endphp
     @foreach($steps as $i => $step)

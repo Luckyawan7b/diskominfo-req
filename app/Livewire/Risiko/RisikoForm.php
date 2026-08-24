@@ -45,17 +45,13 @@ class RisikoForm extends Component
 
     // Tab 5: Kolom Tambahan (Bagian E)
     public string $layanan_pendukung = '';
-    public string $layanan_prioritas = 'Non-Prioritas';
+    public string $layanan_prioritas = 'Instansional';
     public string $pemilik_layanan = '';
     public string $strategis_atau_operasional = 'Operasional';
     public bool $lintas_sektor = false;
     public string $ippd_terkait = '';
     public bool $membutuhkan_perubahan = false;
 
-    // Layanan Digital (jika Prioritas)
-    public bool $perlu_mkb = false;
-    public string $pic = '';
-    public string $target_waktu_penyusunan = '';
 
     public function mount(MrKonteks $konteks, $risiko = null): void
     {
@@ -103,7 +99,7 @@ class RisikoForm extends Component
         // Kolom Tambahan
         if ($r->kolomTambahan) {
             $this->layanan_pendukung          = $r->kolomTambahan->layanan_pendukung ?? '';
-            $this->layanan_prioritas          = $r->kolomTambahan->layanan_prioritas ?? 'Non-Prioritas';
+            $this->layanan_prioritas          = $r->kolomTambahan->layanan_prioritas ?? 'Instansional';
             $this->pemilik_layanan            = $r->kolomTambahan->pemilik_layanan ?? '';
             $this->strategis_atau_operasional = $r->kolomTambahan->strategis_atau_operasional ?? 'Operasional';
             $this->lintas_sektor              = (bool) $r->kolomTambahan->lintas_sektor;
@@ -111,12 +107,6 @@ class RisikoForm extends Component
             $this->membutuhkan_perubahan      = (bool) $r->kolomTambahan->membutuhkan_perubahan;
         }
 
-        // Layanan Digital
-        if ($r->layananDigital) {
-            $this->perlu_mkb               = (bool) $r->layananDigital->perlu_mkb;
-            $this->pic                     = $r->layananDigital->pic ?? '';
-            $this->target_waktu_penyusunan = $r->layananDigital->target_waktu_penyusunan ?? '';
-        }
     }
 
     public function updatedMrSasaranUprId($value)
@@ -190,15 +180,6 @@ class RisikoForm extends Component
                 'ippd_terkait'               => $this->ippd_terkait ?: null,
                 'membutuhkan_perubahan'      => (bool) $this->membutuhkan_perubahan,
             ]);
-
-            // Layanan Digital (jika prioritas)
-            if ($this->layanan_prioritas === 'Prioritas') {
-                $this->risikoModel->layananDigital()->updateOrCreate([], [
-                    'perlu_mkb'               => (bool) $this->perlu_mkb,
-                    'pic'                     => $this->pic ?: null,
-                    'target_waktu_penyusunan' => $this->target_waktu_penyusunan ?: null,
-                ]);
-            }
         }
 
         session()->flash('success', 'Risiko berhasil disimpan.');
