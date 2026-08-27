@@ -7,7 +7,6 @@
     </div>
 
     {{-- Wizard Navigasi --}}
-    <x-risk-wizard :konteks="$konteks" activeStep="Layanan Digital" />
 
     {{-- Pesan Sukses --}}
     @if(session()->has('success'))

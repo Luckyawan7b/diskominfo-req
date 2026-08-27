@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('manajemen-risiko')->group(function () {
         Route::get('/', KonteksIndex::class)->name('konteks.index');
 
-        Route::prefix('konteks/{konteks}')->group(function () {
+        Route::prefix('konteks/{konteks}')->middleware('konteks.access')->group(function () {
             Route::get('/', KonteksForm::class)->name('konteks.form');
             Route::get('/sasaran', SasaranForm::class)->name('sasaran.form');
             Route::get('/struktur', StrukturPelaksanaForm::class)->name('struktur.form');

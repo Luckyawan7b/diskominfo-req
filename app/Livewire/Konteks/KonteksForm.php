@@ -52,13 +52,28 @@ class KonteksForm extends Component
     {
         $riskLabel = app(\App\Services\RiskMatrixCalculator::class)->label($this->selera_risiko);
 
+        $user = auth()->user();
+        $availableKonteks = collect();
+        if ($user->isOperator()) {
+            $availableKonteks = MrKonteks::where('desa_id', $user->desa_id)
+                ->orderByDesc('tahun_penilaian')
+                ->get();
+        } elseif ($user->isAdmin()) {
+            $availableKonteks = MrKonteks::where('desa_id', $this->konteks->desa_id)
+                ->orderByDesc('tahun_penilaian')
+                ->get();
+        }
+
         return view('livewire.konteks.form', [
             'riskLabel'   => $riskLabel,
             'isEditable'  => $this->konteks->isEditableByOperator() || auth()->user()->isAdmin(),
             'breadcrumb'  => [
                 'Manajemen Risiko' => route('konteks.index'),
-                'Konteks ' . $this->konteks->tahun_penilaian => null,
+                'Konteks ' . $this->konteks->tahun_penilaian . ' / ' . $this->konteks->tahun_pelaksanaan => null,
             ],
+        ])->layout('components.layouts.app', [
+            'konteks' => $this->konteks,
+            'availableKonteks' => $availableKonteks,
         ]);
     }
 }

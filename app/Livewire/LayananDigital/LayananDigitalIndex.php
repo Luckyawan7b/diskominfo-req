@@ -73,8 +73,28 @@ class LayananDigitalIndex extends Component
 
     public function render()
     {
+        $user = auth()->user();
+        $availableKonteks = collect();
+        if ($user->isOperator()) {
+            $availableKonteks = MrKonteks::where('desa_id', $user->desa_id)
+                ->orderByDesc('tahun_penilaian')
+                ->get();
+        } elseif ($user->isAdmin()) {
+            $availableKonteks = MrKonteks::where('desa_id', $this->konteks->desa_id)
+                ->orderByDesc('tahun_penilaian')
+                ->get();
+        }
+
         return view('livewire.layanan-digital.index', [
-            'isEditable' => $this->isEditable()
+            'isEditable' => $this->isEditable(),
+            'breadcrumb'      => [
+                'Manajemen Risiko' => route('konteks.index'),
+                'Konteks ' . $this->konteks->tahun_penilaian . ' / ' . $this->konteks->tahun_pelaksanaan => route('konteks.form', $this->konteks),
+                'Layanan Digital' => null,
+            ],
+        ])->layout('components.layouts.app', [
+            'konteks' => $this->konteks,
+            'availableKonteks' => $availableKonteks,
         ]);
     }
 }

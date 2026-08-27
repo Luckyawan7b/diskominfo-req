@@ -22,7 +22,6 @@
         </div>
     </div>
 
-    <x-risk-wizard :konteks="$konteks" activeStep="Struktur" />
 
     <div class="rounded-xl border border-slate-700/50 bg-slate-800/50 p-6 sm:p-8 space-y-6 max-w-3xl">
         {{-- <div class="p-4 rounded-lg bg-emerald-950/20 border border-emerald-500/20 text-xs text-slate-300 leading-relaxed">

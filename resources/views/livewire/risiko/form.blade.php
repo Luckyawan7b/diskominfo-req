@@ -20,7 +20,6 @@
         </div>
     </div>
 
-    <x-risk-wizard :konteks="$konteks" activeStep="Risiko" />
 
     {{-- Tabs Header --}}
     <div class="flex border-b border-slate-700/50 space-x-2 overflow-x-auto mb-6">

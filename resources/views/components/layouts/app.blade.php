@@ -13,7 +13,7 @@
     <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black/60 z-30 lg:hidden" @click="sidebarOpen = false" x-cloak></div>
 
     {{-- Sidebar --}}
-    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-800/95 backdrop-blur-sm border-r border-slate-700/50 transform transition-transform duration-300 ease-in-out lg:translate-x-0">
+    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-800/95 backdrop-blur-sm border-r border-slate-700/50 transform transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col">
         {{-- Sidebar header --}}
         <div class="h-16 flex items-center gap-3 px-5 border-b border-slate-700/50">
             <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
@@ -28,54 +28,96 @@
         </div>
 
         {{-- Navigation --}}
-        <nav class="p-3 space-y-1">
-            {{-- Kembali ke Hub --}}
+        <nav class="p-3 space-y-1 overflow-y-auto flex-1">
+            {{-- Global Links (Selalu ada) --}}
             <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
                 </svg>
                 Kembali ke Dashboard
             </a>
-
+            
             <div class="border-t border-slate-700/50 my-2"></div>
 
-            {{-- Konteks Risiko --}}
-            <a href="{{ route('konteks.index') }}"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('konteks.*') || request()->routeIs('sasaran.*') || request()->routeIs('struktur.*') || request()->routeIs('risiko.*') || request()->routeIs('pemantauan.*') ? 'bg-emerald-500/10 text-emerald-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                </svg>
-                Konteks Risiko
-            </a>
+            @if(isset($konteks) && $konteks)
+                {{-- MODE B: Ada Konteks Aktif --}}
+                <div class="mb-4">
+                    <div class="px-3 py-2 mx-1 rounded-lg bg-emerald-950/30 border border-emerald-500/20">
+                        <div class="text-sm font-semibold text-emerald-400 leading-tight">
+                            {{ $konteks->desa->nama_desa }} — {{ $konteks->nama_upr ?: 'Tanpa UPR' }}
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-1">
+                            Penilaian {{ $konteks->tahun_penilaian }} / Pelaksanaan {{ $konteks->tahun_pelaksanaan }}
+                        </div>
+                        <a href="{{ route('konteks.index') }}" class="inline-block mt-2 text-[10px] text-slate-500 hover:text-slate-300 uppercase tracking-wider font-semibold transition-colors">
+                            &larr; Ganti Konteks
+                        </a>
+                        
+                        @if(isset($availableKonteks) && $availableKonteks->count() > 1)
+                            <div class="mt-2 pt-2 border-t border-emerald-500/10" x-data="{ open: false }">
+                                <button @click="open = !open" class="flex items-center justify-between w-full text-left text-xs text-slate-300 hover:text-white transition-colors cursor-pointer">
+                                    <span>Context Switcher</span>
+                                    <svg :class="open ? 'rotate-180' : ''" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <div x-show="open" x-cloak class="mt-2 space-y-1">
+                                    @foreach($availableKonteks as $ak)
+                                        <a href="{{ route('konteks.form', $ak) }}" class="block px-2 py-1.5 rounded-md text-[11px] {{ $ak->id === $konteks->id ? 'bg-emerald-500/20 text-emerald-300' : 'text-slate-400 hover:bg-slate-700/50 hover:text-slate-200' }}">
+                                            {{ $ak->nama_upr }} (Pnl. {{ $ak->tahun_penilaian }} / Plk. {{ $ak->tahun_pelaksanaan }})
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <a href="{{ route('konteks.form', $konteks) }}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('konteks.form') || request()->routeIs('sasaran.form') || request()->routeIs('struktur.form') ? 'bg-emerald-500/10 text-emerald-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
+                    Formulir 0.0 — Penetapan Konteks
+                </a>
+                <div class="ml-6 space-y-1 mb-2">
+                    <a href="{{ route('konteks.form', $konteks) }}" class="block px-3 py-1.5 rounded-lg text-xs transition-colors {{ request()->routeIs('konteks.form') ? 'text-emerald-400' : 'text-slate-400 hover:text-white' }}">Identitas & Selera Risiko</a>
+                    <a href="{{ route('sasaran.form', $konteks) }}" class="block px-3 py-1.5 rounded-lg text-xs transition-colors {{ request()->routeIs('sasaran.form') ? 'text-emerald-400' : 'text-slate-400 hover:text-white' }}">Sasaran UPR</a>
+                    <a href="{{ route('struktur.form', $konteks) }}" class="block px-3 py-1.5 rounded-lg text-xs transition-colors {{ request()->routeIs('struktur.form') ? 'text-emerald-400' : 'text-slate-400 hover:text-white' }}">Struktur Pelaksana</a>
+                </div>
+
+                <a href="{{ route('risiko.index', $konteks) }}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('risiko.*') && !request()->routeIs('risiko.peta') ? 'bg-emerald-500/10 text-emerald-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
+                    Formulir 1.0 — Daftar Risiko
+                </a>
+                
+                <a href="{{ route('layanan-digital.index', $konteks) }}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('layanan-digital.*') ? 'bg-emerald-500/10 text-emerald-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
+                    Formulir 2.0 — Layanan Digital
+                </a>
+                
+                <a href="{{ route('risiko.peta', $konteks) }}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('risiko.peta') ? 'bg-emerald-500/10 text-emerald-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
+                    Formulir 3.0 — Peta Risiko
+                </a>
+                
+                <a href="{{ route('pemantauan.form', $konteks) }}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('pemantauan.form') ? 'bg-emerald-500/10 text-emerald-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
+                    Formulir 3.1 — Pemantauan
+                </a>
+
+            @else
+                {{-- MODE A: Tidak ada konteks spesifik --}}
+                <a href="{{ route('konteks.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('konteks.*') ? 'bg-emerald-500/10 text-emerald-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    Daftar Konteks
+                </a>
+            @endif
 
             @if(auth()->user()->isAdmin())
                 <div class="border-t border-slate-700/50 my-2"></div>
                 <p class="px-3 py-1 text-xs font-semibold text-slate-500 uppercase tracking-wider">Admin</p>
 
-                {{-- Review & Approval --}}
-                <a href="{{ route('admin.review.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('admin.review.*') ? 'bg-amber-500/10 text-amber-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+                <a href="{{ route('admin.review.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('admin.review.*') ? 'bg-amber-500/10 text-amber-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
                     Review & Approval
                 </a>
-
-                {{-- Kelola Desa --}}
-                <a href="{{ route('admin.desa.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('admin.desa.*') ? 'bg-violet-500/10 text-violet-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
+                <a href="{{ route('admin.desa.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('admin.desa.*') ? 'bg-violet-500/10 text-violet-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
                     Kelola Desa
                 </a>
-
-                {{-- Kelola User --}}
-                <a href="{{ route('admin.user.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('admin.user.*') ? 'bg-violet-500/10 text-violet-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                    </svg>
+                <a href="{{ route('admin.user.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('admin.user.*') ? 'bg-violet-500/10 text-violet-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
                     Kelola User
                 </a>
             @endif

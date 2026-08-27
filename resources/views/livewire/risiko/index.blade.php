@@ -23,7 +23,6 @@
         </div>
     </div>
 
-    <x-risk-wizard :konteks="$konteks" activeStep="Risiko" />
 
     {{-- Filter --}}
     <div class="mb-4">

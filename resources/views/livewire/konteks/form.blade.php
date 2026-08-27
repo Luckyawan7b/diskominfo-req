@@ -1,7 +1,7 @@
 <div>
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-white">Penetapan Konteks — {{ $konteks->tahun_penilaian }}</h1>
+            <h1 class="text-2xl font-bold text-white">Penetapan Konteks — Penilaian {{ $konteks->tahun_penilaian }} / Pelaksanaan {{ $konteks->tahun_pelaksanaan }}</h1>
             <p class="text-sm text-slate-400 mt-1">Formulir 1 & 4: Identitas instansi dan selera risiko</p>
         </div>
         <div class="flex gap-3">
@@ -19,7 +19,6 @@
     </div>
 
     {{-- Wizard steps --}}
-    <x-risk-wizard :konteks="$konteks" activeStep="Konteks" />
 
     {{-- Form --}}
     <div class="rounded-xl border border-slate-700/50 bg-slate-800/50 p-6 sm:p-8 space-y-6">

@@ -13,7 +13,6 @@
     </div>
 
     {{-- Wizard Navigasi --}}
-    <x-risk-wizard :konteks="$konteks" activeStep="Pemantauan" />
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {{-- Left: Risk Selector --}}

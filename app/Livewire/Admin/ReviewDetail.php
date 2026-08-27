@@ -90,13 +90,28 @@ class ReviewDetail extends Component
             ->orderBy('prioritas_risiko')
             ->get();
 
+        $user = auth()->user();
+        $availableKonteks = collect();
+        if ($user->isOperator()) {
+            $availableKonteks = MrKonteks::where('desa_id', $user->desa_id)
+                ->orderByDesc('tahun_penilaian')
+                ->get();
+        } elseif ($user->isAdmin()) {
+            $availableKonteks = MrKonteks::where('desa_id', $this->konteks->desa_id)
+                ->orderByDesc('tahun_penilaian')
+                ->get();
+        }
+
         return view('livewire.admin.review-detail', [
             'risikos' => $risikos,
             'breadcrumb' => [
                 'Admin' => null,
                 'Review & Approval' => route('admin.review.index'),
-                ($this->konteks->desa->nama_desa ?? 'Desa') . ' (' . $this->konteks->tahun_penilaian . ')' => null,
+                ($this->konteks->desa->nama_desa ?? 'Desa') . ' (' . $this->konteks->tahun_penilaian . '/' . $this->konteks->tahun_pelaksanaan . ')' => null,
             ],
+        ])->layout('components.layouts.app', [
+            'konteks' => $this->konteks,
+            'availableKonteks' => $availableKonteks,
         ]);
     }
 }

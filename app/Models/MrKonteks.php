@@ -21,14 +21,16 @@ class MrKonteks extends Model
         'tugas_upr',
         'fungsi_upr',
         'tahun_penilaian',
+        'tahun_pelaksanaan',
         'selera_risiko',
         'status',
         'created_by',
     ];
 
     protected $casts = [
-        'tahun_penilaian' => 'integer',
-        'selera_risiko'   => 'integer',
+        'tahun_penilaian'   => 'integer',
+        'tahun_pelaksanaan' => 'integer',
+        'selera_risiko'     => 'integer',
     ];
 
     // ─── Relations ───────────────────────────────────────────────────────────

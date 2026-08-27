@@ -81,6 +81,18 @@ class PemantauanForm extends Component
         $selectedRisiko = $this->selectedRisikoId ? MrRisiko::with('pemantauan.lampiran')->find($this->selectedRisikoId) : null;
         $pemantauanList = $selectedRisiko ? $selectedRisiko->pemantauan()->with('lampiran')->latest()->get() : collect();
 
+        $user = auth()->user();
+        $availableKonteks = collect();
+        if ($user->isOperator()) {
+            $availableKonteks = MrKonteks::where('desa_id', $user->desa_id)
+                ->orderByDesc('tahun_penilaian')
+                ->get();
+        } elseif ($user->isAdmin()) {
+            $availableKonteks = MrKonteks::where('desa_id', $this->konteks->desa_id)
+                ->orderByDesc('tahun_penilaian')
+                ->get();
+        }
+
         return view('livewire.pemantauan.form', [
             'risikos'         => $risikos,
             'selectedRisiko'  => $selectedRisiko,
@@ -88,9 +100,12 @@ class PemantauanForm extends Component
             'isEditable'      => $this->konteks->isEditableByOperator() || auth()->user()->isAdmin(),
             'breadcrumb'      => [
                 'Manajemen Risiko' => route('konteks.index'),
-                'Konteks ' . $this->konteks->tahun_penilaian => route('konteks.form', $this->konteks),
+                'Konteks ' . $this->konteks->tahun_penilaian . ' / ' . $this->konteks->tahun_pelaksanaan => route('konteks.form', $this->konteks),
                 'Pemantauan Risiko' => null,
             ],
+        ])->layout('components.layouts.app', [
+            'konteks' => $this->konteks,
+            'availableKonteks' => $availableKonteks,
         ]);
     }
 }
