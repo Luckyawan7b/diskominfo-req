@@ -2,47 +2,80 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Konteks\KonteksIndex;
+use App\Models\Layanan;
 use App\Models\MrKonteks;
-use App\Models\MrRisiko;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 #[Layout('components.layouts.hub')]
 class Dashboard extends Component
 {
-    public function render()
+    public Layanan $layanan;
+
+    public function mount(Layanan $layanan): void
     {
         $user = auth()->user();
 
-        // Badge counts for Manajemen Risiko card
-        $badgeCount = 0;
+        // Pastikan operator hanya bisa akses layanan miliknya
+        if ($user->isOperator() && $layanan->desa_id !== $user->desa_id) {
+            abort(403, 'Anda tidak memiliki akses ke layanan ini.');
+        }
 
-        if ($user->isAdmin()) {
-            // Admin: count konteks pending review
-            $badgeCount = MrKonteks::where('status', 'submitted')->count();
-        } elseif ($user->isOperator() && $user->desa_id) {
-            // Operator: count rejected risks in their active konteks
-            $badgeCount = MrRisiko::whereHas('konteks', function ($q) use ($user) {
-                $q->where('desa_id', $user->desa_id)
-                  ->where('status', 'rejected');
-            })->where('status', 'rejected')->count();
+        $this->layanan = $layanan;
+    }
+
+    /**
+     * Dipanggil saat user klik kartu Manajemen Risiko.
+     * Menyimpan layanan_id ke session, lalu KonteksIndex akan auto-create konteks.
+     */
+    public function openModulMR(): void
+    {
+        $mrKonteks = MrKonteks::where('layanan_id', $this->layanan->id)->first();
+
+        if ($mrKonteks) {
+            // Konteks sudah ada → langsung masuk form
+            $this->redirect(route('konteks.form', $mrKonteks), navigate: true);
+        } else {
+            // Konteks belum ada → simpan session, biarkan KonteksIndex auto-create
+            session(['active_layanan_id' => $this->layanan->id]);
+            $this->redirect(route('konteks.index'), navigate: true);
+        }
+    }
+
+    public function render()
+    {
+        $user    = auth()->user();
+        $layanan = $this->layanan;
+
+        // Hitung badge: jumlah konteks MR layanan ini yang pending / rejected
+        $mrKonteks = MrKonteks::where('layanan_id', $layanan->id)->first();
+
+        $badgeCount = 0;
+        if ($mrKonteks) {
+            if ($user->isAdmin() && $mrKonteks->status === 'submitted') {
+                $badgeCount = 1;
+            }
         }
 
         return view('livewire.dashboard', [
+            'layanan'    => $layanan,
             'badgeCount' => $badgeCount,
-            'modules' => $this->getModules(),
+            'modules'    => $this->getModules($layanan, $mrKonteks),
         ]);
     }
 
-    private function getModules(): array
+    private function getModules(Layanan $layanan, ?MrKonteks $mrKonteks): array
     {
         return [
             [
                 'name'        => 'Manajemen Risiko',
                 'description' => 'Identifikasi, analisis, dan penanganan risiko SPBE',
                 'icon'        => 'shield-check',
-                'route'       => route('konteks.index'),
+                'route'       => $mrKonteks ? route('konteks.form', $mrKonteks) : null,
+                'wireAction'  => $mrKonteks ? null : 'openModulMR',
                 'active'      => true,
+                'filled'      => (bool) $mrKonteks,
                 'gradient'    => 'from-emerald-500 to-teal-600',
                 'shadow'      => 'shadow-emerald-500/25',
                 'bg'          => 'bg-emerald-500/10',
@@ -55,6 +88,7 @@ class Dashboard extends Component
                 'icon'        => 'book-open',
                 'route'       => null,
                 'active'      => false,
+                'filled'      => false,
                 'gradient'    => 'from-blue-500 to-indigo-600',
                 'shadow'      => 'shadow-blue-500/25',
                 'bg'          => 'bg-blue-500/10',
@@ -67,6 +101,7 @@ class Dashboard extends Component
                 'icon'        => 'arrows-right-left',
                 'route'       => null,
                 'active'      => false,
+                'filled'      => false,
                 'gradient'    => 'from-amber-500 to-orange-600',
                 'shadow'      => 'shadow-amber-500/25',
                 'bg'          => 'bg-amber-500/10',
@@ -79,6 +114,7 @@ class Dashboard extends Component
                 'icon'        => 'arrow-path',
                 'route'       => null,
                 'active'      => false,
+                'filled'      => false,
                 'gradient'    => 'from-violet-500 to-purple-600',
                 'shadow'      => 'shadow-violet-500/25',
                 'bg'          => 'bg-violet-500/10',
@@ -91,6 +127,7 @@ class Dashboard extends Component
                 'icon'        => 'users',
                 'route'       => null,
                 'active'      => false,
+                'filled'      => false,
                 'gradient'    => 'from-rose-500 to-pink-600',
                 'shadow'      => 'shadow-rose-500/25',
                 'bg'          => 'bg-rose-500/10',

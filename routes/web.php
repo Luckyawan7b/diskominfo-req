@@ -24,23 +24,33 @@ Route::middleware('guest')->group(function () {
 
 // ─── Authenticated Routes ─────────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
-    // Dashboard Hub (Launcher 5 Modul)
-    Route::get('/', Dashboard::class)->name('dashboard');
+    // Dashboard Utama: Daftar Layanan
+    Route::get('/', \App\Livewire\Layanan\LayananIndex::class)->name('layanan.index');
+    Route::get('/layanan', \App\Livewire\Layanan\LayananIndex::class)->name('layanan.index_alias');
+    
+    Route::get('/layanan/baru', \App\Livewire\Layanan\LayananForm::class)->name('layanan.create');
+    Route::get('/layanan/{layanan}/edit', \App\Livewire\Layanan\LayananForm::class)->name('layanan.edit');
+    
     Route::post('/logout', [LogoutController::class, 'destroy'])->name('logout');
 
-    // Modul Manajemen Risiko (Konteks & Formulir)
-    Route::prefix('manajemen-risiko')->group(function () {
-        Route::get('/', KonteksIndex::class)->name('konteks.index');
+    Route::middleware('has.layanan')->group(function () {
+        // Dashboard Hub (Launcher 5 Modul per Layanan)
+        Route::get('/layanan/{layanan}/manajemen', Dashboard::class)->name('layanan.dashboard');
 
-        Route::prefix('konteks/{konteks}')->middleware('konteks.access')->group(function () {
-            Route::get('/', KonteksForm::class)->name('konteks.form');
-            Route::get('/sasaran', SasaranForm::class)->name('sasaran.form');
-            Route::get('/struktur', StrukturPelaksanaForm::class)->name('struktur.form');
-            Route::get('/risiko', RisikoIndex::class)->name('risiko.index');
-            Route::get('/layanan-digital', \App\Livewire\LayananDigital\LayananDigitalIndex::class)->name('layanan-digital.index');
-            Route::get('/risiko/{risiko}', RisikoForm::class)->name('risiko.form');
-            Route::get('/peta-risiko', PetaRisiko::class)->name('risiko.peta');
-            Route::get('/pemantauan', PemantauanForm::class)->name('pemantauan.form');
+        // Modul Manajemen Risiko (Konteks & Formulir)
+        Route::prefix('manajemen-risiko')->group(function () {
+            Route::get('/', KonteksIndex::class)->name('konteks.index');
+
+            Route::prefix('konteks/{konteks}')->middleware('konteks.access')->group(function () {
+                Route::get('/', KonteksForm::class)->name('konteks.form');
+                Route::get('/sasaran', SasaranForm::class)->name('sasaran.form');
+                Route::get('/struktur', StrukturPelaksanaForm::class)->name('struktur.form');
+                Route::get('/risiko', RisikoIndex::class)->name('risiko.index');
+                Route::get('/layanan-digital', \App\Livewire\LayananDigital\LayananDigitalIndex::class)->name('layanan-digital.index');
+                Route::get('/risiko/{risiko}', RisikoForm::class)->name('risiko.form');
+                Route::get('/peta-risiko', PetaRisiko::class)->name('risiko.peta');
+                Route::get('/pemantauan', PemantauanForm::class)->name('pemantauan.form');
+            });
         });
     });
 

@@ -30,11 +30,11 @@
         {{-- Navigation --}}
         <nav class="p-3 space-y-1 overflow-y-auto flex-1">
             {{-- Global Links (Selalu ada) --}}
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <a href="{{ route('layanan.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
                 </svg>
-                Kembali ke Dashboard
+                Daftar Layanan
             </a>
             
             <div class="border-t border-slate-700/50 my-2"></div>
@@ -112,7 +112,7 @@
                 <p class="px-3 py-1 text-xs font-semibold text-slate-500 uppercase tracking-wider">Admin</p>
 
                 <a href="{{ route('admin.review.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('admin.review.*') ? 'bg-amber-500/10 text-amber-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
-                    Review & Approval
+                    Monitoring
                 </a>
                 <a href="{{ route('admin.desa.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('admin.desa.*') ? 'bg-violet-500/10 text-violet-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
                     Kelola Desa
@@ -137,7 +137,11 @@
 
             {{-- Breadcrumb --}}
             <div class="flex items-center gap-2 text-sm">
-                <a href="{{ route('dashboard') }}" class="text-slate-500 hover:text-slate-300 transition-colors">Dashboard</a>
+                <a href="{{ route('layanan.index') }}" class="text-slate-500 hover:text-slate-300 transition-colors">Layanan</a>
+                @if(isset($layanan) && $layanan)
+                    <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    <span class="text-slate-400 max-w-[140px] truncate" title="{{ $layanan->nama_layanan }}">{{ $layanan->nama_layanan }}</span>
+                @endif
                 @if(isset($breadcrumb))
                     @foreach($breadcrumb as $label => $url)
                         <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>

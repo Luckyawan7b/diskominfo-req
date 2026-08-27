@@ -23,7 +23,7 @@ class RoleMiddleware
                 abort(403, 'Anda tidak memiliki akses ke halaman ini.');
             }
 
-            return redirect()->route('dashboard')
+            return redirect()->route('layanan.index')
                 ->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
         }
 
