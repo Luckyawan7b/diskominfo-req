@@ -15,6 +15,7 @@ use App\Livewire\Risiko\RisikoForm;
 use App\Livewire\Risiko\RisikoIndex;
 use App\Livewire\Sasaran\SasaranForm;
 use App\Livewire\StrukturPelaksana\StrukturPelaksanaForm;
+use App\Livewire\Mpn\PerencanaanForm;
 use Illuminate\Support\Facades\Route;
 
 // ─── Guest Routes ─────────────────────────────────────────────────────────────
@@ -41,6 +42,26 @@ Route::middleware('auth')->group(function () {
             Route::get('/risiko/{risiko}', RisikoForm::class)->name('risiko.form');
             Route::get('/peta-risiko', PetaRisiko::class)->name('risiko.peta');
             Route::get('/pemantauan', PemantauanForm::class)->name('pemantauan.form');
+        });
+    });
+
+    // Modul Manajemen Pengetahuan (MPN)
+    Route::prefix('manajemen-pengetahuan')->group(function () {
+        Route::get('/', function () {
+            $user = auth()->user();
+            $tahun = date('Y');
+            if ($user->desa_id) {
+                $konteks = \App\Models\MpnKonteks::firstOrCreate(
+                    ['desa_id' => $user->desa_id, 'tahun_penilaian' => $tahun],
+                    ['status' => 'draft', 'created_by' => $user->id]
+                );
+                return redirect()->route('mpn.perencanaan', $konteks->id);
+            }
+            abort(403, 'Anda belum terasosiasi dengan entitas/desa manapun.');
+        })->name('mpn.index');
+
+        Route::prefix('konteks/{konteks}')->group(function () {
+            Route::get('/perencanaan', PerencanaanForm::class)->name('mpn.perencanaan');
         });
     });
 
