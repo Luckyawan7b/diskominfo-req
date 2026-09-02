@@ -39,7 +39,8 @@
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-slate-700/50">
-                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Tahun</th>
+                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Tahun Penilaian</th>
+                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Tahun Pelaksanaan</th>
                     <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Desa / Instansi</th>
                     <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">UPR</th>
                     <th class="text-center px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Risiko</th>
@@ -51,6 +52,7 @@
                 @forelse($konteks as $item)
                     <tr class="hover:bg-slate-700/20 transition-colors">
                         <td class="px-5 py-4 text-white font-semibold">{{ $item->tahun_penilaian }}</td>
+                        <td class="px-5 py-4 text-white font-semibold">{{ $item->tahun_pelaksanaan ?? '-' }}</td>
                         <td class="px-5 py-4">
                             <p class="text-slate-200">{{ $item->desa->nama_desa ?? '-' }}</p>
                             <p class="text-xs text-slate-500">{{ $item->nama_instansi }}</p>
@@ -114,6 +116,26 @@
                     @error('newTahun')
                         <p class="mt-1.5 text-sm text-red-400">{{ $message }}</p>
                     @enderror
+
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5 mt-4">Tahun Pelaksanaan</label>
+                    <input wire:model="newTahunPelaksanaan" type="number" min="2020" max="2099"
+                        class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                    <p class="mt-1.5 text-xs text-slate-400">Diisi dengan tahun program/layanan yang akan dilaksanakan, bisa berbeda dari Tahun Penilaian di atas.</p>
+                    @error('newTahunPelaksanaan')
+                        <p class="mt-1.5 text-sm text-red-400">{{ $message }}</p>
+                    @enderror
+
+                    @if($previousKonteksOptions && $previousKonteksOptions->isNotEmpty())
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5 mt-4">Salin Data (Opsional)</label>
+                        <select wire:model="duplicateFromId" class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                            <option value="">-- Jangan Salin Apa Pun --</option>
+                            @foreach($previousKonteksOptions as $opt)
+                                <option value="{{ $opt->id }}">{{ $opt->nama_upr }} — Penilaian {{ $opt->tahun_penilaian }} / Pelaksanaan {{ $opt->tahun_pelaksanaan }}</option>
+                            @endforeach
+                        </select>
+                        <p class="mt-1.5 text-xs text-slate-400">Salin identitas, Sasaran UPR & Struktur Pelaksana dari konteks lain. Daftar risiko TIDAK ikut disalin.</p>
+                    @endif
+
                     <div class="flex gap-3 mt-6">
                         <button type="button" wire:click="$set('showCreateModal', false)" class="flex-1 rounded-lg border border-slate-600 px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-700 transition-colors cursor-pointer">Batal</button>
                         <button type="submit" class="flex-1 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-700 transition-all cursor-pointer">Buat</button>

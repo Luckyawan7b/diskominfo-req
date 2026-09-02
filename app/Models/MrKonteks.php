@@ -16,19 +16,22 @@ class MrKonteks extends Model
 
     protected $fillable = [
         'desa_id',
+        'layanan_id',
         'nama_instansi',
         'nama_upr',
         'tugas_upr',
         'fungsi_upr',
         'tahun_penilaian',
+        'tahun_pelaksanaan',
         'selera_risiko',
         'status',
         'created_by',
     ];
 
     protected $casts = [
-        'tahun_penilaian' => 'integer',
-        'selera_risiko'   => 'integer',
+        'tahun_penilaian'   => 'integer',
+        'tahun_pelaksanaan' => 'integer',
+        'selera_risiko'     => 'integer',
     ];
 
     // ─── Relations ───────────────────────────────────────────────────────────
@@ -36,6 +39,11 @@ class MrKonteks extends Model
     public function desa(): BelongsTo
     {
         return $this->belongsTo(Desa::class);
+    }
+
+    public function layanan(): BelongsTo
+    {
+        return $this->belongsTo(Layanan::class);
     }
 
     public function creator(): BelongsTo
@@ -63,7 +71,8 @@ class MrKonteks extends Model
     /** Operator tidak bisa mengedit saat submitted/approved/archived */
     public function isEditableByOperator(): bool
     {
-        return in_array($this->status, ['draft', 'rejected']);
+        // Dengan flow auto-approve, hanya 'draft' yang bisa diedit
+        return $this->status === 'draft';
     }
 
     public function isApproved(): bool

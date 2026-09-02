@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role'              => \App\Http\Middleware\RoleMiddleware::class,
             'konteks.editable'  => \App\Http\Middleware\EnsureKonteksEditable::class,
+            'konteks.access'    => \App\Http\Middleware\EnsureKonteksAccessible::class,
+            'has.layanan'       => \App\Http\Middleware\EnsureHasLayanan::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

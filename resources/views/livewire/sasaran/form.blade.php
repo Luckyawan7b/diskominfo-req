@@ -24,7 +24,6 @@
         </div>
     </div>
 
-    <x-risk-wizard :konteks="$konteks" activeStep="Sasaran" />
 
     @if (session('success'))
         <div class="mb-4 px-4 py-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm">

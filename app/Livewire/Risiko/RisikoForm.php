@@ -202,6 +202,18 @@ class RisikoForm extends Component
             }
         }
 
+        $user = auth()->user();
+        $availableKonteks = collect();
+        if ($user->isOperator()) {
+            $availableKonteks = MrKonteks::where('desa_id', $user->desa_id)
+                ->orderByDesc('tahun_penilaian')
+                ->get();
+        } elseif ($user->isAdmin()) {
+            $availableKonteks = MrKonteks::where('desa_id', $this->konteks->desa_id)
+                ->orderByDesc('tahun_penilaian')
+                ->get();
+        }
+
         return view('livewire.risiko.form', [
             'kategoriList' => RefKategoriRisiko::orderBy('id')->get(),
             'sasaranList'  => $this->konteks->sasaranUpr()->orderBy('urutan')->get(),
@@ -216,6 +228,9 @@ class RisikoForm extends Component
                 'Risiko' => route('risiko.index', $this->konteks),
                 ($this->isNew ? 'Baru' : $this->kode_risiko) => null,
             ],
+        ])->layout('components.layouts.app', [
+            'konteks' => $this->konteks,
+            'availableKonteks' => $availableKonteks,
         ]);
     }
 }

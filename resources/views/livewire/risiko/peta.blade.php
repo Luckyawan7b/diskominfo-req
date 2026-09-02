@@ -12,7 +12,6 @@
         </div>
     </div>
 
-    <x-risk-wizard :konteks="$konteks" activeStep="Peta Risiko" />
 
     {{-- Selera Risiko Info Card --}}
     <div class="mb-6 p-4 rounded-xl border border-slate-700 bg-slate-800/40 flex flex-wrap items-center justify-between gap-4">

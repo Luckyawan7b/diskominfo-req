@@ -44,11 +44,16 @@ class UserIndex extends Component
 
     public function save(): void
     {
+        $operatorRole = Role::where('name', 'operator')->first();
+        $isOperator = $this->role_id == $operatorRole?->id;
+
         $rules = [
             'name'    => 'required|string|max:255',
             'email'   => 'required|email|max:255|unique:users,email,' . $this->editingId,
             'role_id' => 'required|exists:roles,id',
-            'desa_id' => 'nullable|exists:desa,id',
+            'desa_id' => $isOperator 
+                ? 'required|exists:desa,id|unique:users,desa_id,' . $this->editingId 
+                : 'nullable|exists:desa,id',
         ];
 
         if (! $this->editingId) {
@@ -57,7 +62,9 @@ class UserIndex extends Component
             $rules['password'] = 'nullable|min:6';
         }
 
-        $this->validate($rules);
+        $this->validate($rules, [
+            'desa_id.unique' => 'OPD/Desa ini sudah memiliki akun operator. Satu OPD hanya boleh memiliki 1 akun.',
+        ]);
 
         $selectedRole = Role::find($this->role_id);
         $finalDesaId = ($selectedRole && $selectedRole->name === 'admin') ? null : $this->desa_id;

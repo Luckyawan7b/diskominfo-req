@@ -29,7 +29,7 @@ class Login extends Component
 
         session()->regenerate();
 
-        $this->redirect(route('dashboard'), navigate: true);
+        $this->redirect(route('layanan.index'), navigate: true);
     }
 
     public function render()
