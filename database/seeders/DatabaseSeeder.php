@@ -8,7 +8,7 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed urutan dependency:
-     * roles → desa → users (butuh roles & desa) → ref data → (demo data opsional)
+     * roles → dinas → users (butuh roles & dinas) → ref data → (demo data opsional)
      */
     public function run(): void
     {
@@ -16,13 +16,14 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             RefKategoriRisikoSeeder::class,
+            RefMetodePengolahanSeeder::class,
         ]);
 
         // ── Data dev/testing (jangan jalankan di production) ─────────────────
         if (app()->environment(['local', 'testing'])) {
             $this->call([
-                DesaSeeder::class,
-                UserSeeder::class,  // butuh roles & desa sudah ada
+                DinasSeeder::class,
+                UserSeeder::class,  // butuh roles & dinas sudah ada
             ]);
         }
     }

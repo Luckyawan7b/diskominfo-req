@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Livewire\Sasaran\SasaranForm;
-use App\Models\Desa;
+use App\Models\Dinas;
 use App\Models\MrIndikatorKinerja;
 use App\Models\MrKonteks;
 use App\Models\MrSasaranUpr;
@@ -25,13 +25,13 @@ class SasaranFormTest extends TestCase
 
     public function test_can_add_save_and_manage_sasaran_upr_with_new_and_existing_national_goals(): void
     {
-        $operator = User::where('email', 'operator.skm@diskominfo.test')->first();
+        $operator = User::where('email', 'operator.dukcapil@diskominfo.test')->first();
         $this->actingAs($operator);
 
         $konteks = MrKonteks::create([
-            'desa_id'         => $operator->desa_id,
-            'nama_instansi'   => $operator->desa->nama_desa,
-            'nama_upr'        => 'UPR Desa Sukamaju',
+            'dinas_id'         => $operator->dinas_id,
+            'nama_instansi'   => $operator->dinas->nama_dinas,
+            'nama_upr'        => 'UPR Dinas Sukamaju',
             'tahun_penilaian' => 2026,
             'status'          => 'draft',
             'created_by'      => $operator->id,
@@ -40,8 +40,8 @@ class SasaranFormTest extends TestCase
         // 1. Operator adds a block and types a brand new Sasaran Pembangunan Nasional
         $testComponent = Livewire::test(SasaranForm::class, ['konteks' => $konteks])
             ->call('addBlock')
-            ->set('blocks.0.sasaran_upr', 'Peningkatan Kualitas Pelayanan Publik Desa')
-            ->set('blocks.0.sasaran_nasional', 'Terwujudnya Tata Kelola Pemerintahan Desa Digital')
+            ->set('blocks.0.sasaran_upr', 'Peningkatan Kualitas Pelayanan Publik Dinas')
+            ->set('blocks.0.sasaran_nasional', 'Terwujudnya Tata Kelola Pemerintahan Dinas Digital')
             ->set('blocks.0.indikator.0.indikator_kinerja', 'Tingkat kepuasan warga')
             ->set('blocks.0.indikator.0.target_kinerja', '85%')
             ->call('saveBlock', 0)
@@ -49,15 +49,15 @@ class SasaranFormTest extends TestCase
 
         // Check database for national ref and UPR
         $this->assertDatabaseHas('ref_sasaran_nasional', [
-            'teks_sasaran' => 'Terwujudnya Tata Kelola Pemerintahan Desa Digital',
+            'teks_sasaran' => 'Terwujudnya Tata Kelola Pemerintahan Dinas Digital',
         ]);
 
-        $createdRef = RefSasaranNasional::where('teks_sasaran', 'Terwujudnya Tata Kelola Pemerintahan Desa Digital')->first();
+        $createdRef = RefSasaranNasional::where('teks_sasaran', 'Terwujudnya Tata Kelola Pemerintahan Dinas Digital')->first();
         $this->assertNotNull($createdRef);
 
         $this->assertDatabaseHas('mr_sasaran_upr', [
             'mr_konteks_id' => $konteks->id,
-            'sasaran_upr'   => 'Peningkatan Kualitas Pelayanan Publik Desa',
+            'sasaran_upr'   => 'Peningkatan Kualitas Pelayanan Publik Dinas',
             'ref_sasaran_nasional_id' => $createdRef->id,
         ]);
 
@@ -72,8 +72,8 @@ class SasaranFormTest extends TestCase
 
         // 3. Operator adds another block with the same or related Sasaran Nasional
         $testComponent->call('addBlock')
-            ->set('blocks.1.sasaran_upr', 'Pengembangan Sistem Arsip Digital Desa')
-            ->set('blocks.1.sasaran_nasional', 'Terwujudnya Tata Kelola Pemerintahan Desa Digital')
+            ->set('blocks.1.sasaran_upr', 'Pengembangan Sistem Arsip Digital Dinas')
+            ->set('blocks.1.sasaran_nasional', 'Terwujudnya Tata Kelola Pemerintahan Dinas Digital')
             ->set('blocks.1.indikator.0.indikator_kinerja', 'Persentase arsip digital')
             ->set('blocks.1.indikator.0.target_kinerja', '100%')
             ->call('saveBlock', 1)
@@ -81,7 +81,7 @@ class SasaranFormTest extends TestCase
 
         $this->assertDatabaseHas('mr_sasaran_upr', [
             'mr_konteks_id' => $konteks->id,
-            'sasaran_upr'   => 'Pengembangan Sistem Arsip Digital Desa',
+            'sasaran_upr'   => 'Pengembangan Sistem Arsip Digital Dinas',
             'ref_sasaran_nasional_id' => $createdRef->id,
         ]);
 
@@ -89,7 +89,7 @@ class SasaranFormTest extends TestCase
         $testComponent->call('removeIndikator', 0, 1)
             ->assertHasNoErrors();
 
-        $firstBlockUpr = MrSasaranUpr::where('sasaran_upr', 'Peningkatan Kualitas Pelayanan Publik Desa')->first();
+        $firstBlockUpr = MrSasaranUpr::where('sasaran_upr', 'Peningkatan Kualitas Pelayanan Publik Dinas')->first();
         $this->assertCount(1, $firstBlockUpr->indikator);
 
         // 5. Remove the second block
@@ -97,7 +97,7 @@ class SasaranFormTest extends TestCase
             ->assertHasNoErrors();
 
         $this->assertSoftDeleted('mr_sasaran_upr', [
-            'sasaran_upr' => 'Pengembangan Sistem Arsip Digital Desa',
+            'sasaran_upr' => 'Pengembangan Sistem Arsip Digital Dinas',
         ]);
     }
 }

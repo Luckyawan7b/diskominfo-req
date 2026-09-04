@@ -5,22 +5,16 @@
             <p class="text-sm text-slate-400 mt-1">Kelola dokumen manajemen risiko per tahun penilaian</p>
         </div>
 
-        @if(auth()->user()->isOperator())
-            <button wire:click="$set('showCreateModal', true)"
-                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-700 transition-all cursor-pointer">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                Buat Konteks Baru
-            </button>
-        @endif
+
     </div>
 
     {{-- Filters --}}
     <div class="flex flex-wrap gap-3 mb-6">
-        @if(auth()->user()->isAdmin() && $desaList->isNotEmpty())
+        @if(auth()->user()->isAdmin() && $dinasList->isNotEmpty())
             <select wire:model.live="filterDesa" class="rounded-lg border border-slate-600 bg-slate-800 text-sm text-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                <option value="">Semua Desa</option>
-                @foreach($desaList as $desa)
-                    <option value="{{ $desa->id }}">{{ $desa->nama_desa }}</option>
+                <option value="">Semua Dinas</option>
+                @foreach($dinasList as $dinas)
+                    <option value="{{ $dinas->id }}">{{ $dinas->nama_dinas }}</option>
                 @endforeach
             </select>
         @endif
@@ -40,7 +34,7 @@
             <thead>
                 <tr class="border-b border-slate-700/50">
                     <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Tahun</th>
-                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Desa / Instansi</th>
+                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Dinas / Instansi</th>
                     <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">UPR</th>
                     <th class="text-center px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Risiko</th>
                     <th class="text-center px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
@@ -52,7 +46,7 @@
                     <tr class="hover:bg-slate-700/20 transition-colors">
                         <td class="px-5 py-4 text-white font-semibold">{{ $item->tahun_penilaian }}</td>
                         <td class="px-5 py-4">
-                            <p class="text-slate-200">{{ $item->desa->nama_desa ?? '-' }}</p>
+                            <p class="text-slate-200">{{ $item->dinas->nama_dinas ?? '-' }}</p>
                             <p class="text-xs text-slate-500">{{ $item->nama_instansi }}</p>
                         </td>
                         <td class="px-5 py-4 text-slate-300">{{ $item->nama_upr ?: '-' }}</td>
@@ -101,25 +95,5 @@
         </table>
     </div>
 
-    {{-- Create Modal --}}
-    @if($showCreateModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4" x-data x-init="$el.querySelector('input')?.focus()">
-            <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" wire:click="$set('showCreateModal', false)"></div>
-            <div class="relative bg-slate-800 border border-slate-700/50 rounded-2xl shadow-2xl w-full max-w-md p-6">
-                <h3 class="text-lg font-semibold text-white mb-4">Buat Konteks Baru</h3>
-                <form wire:submit="createKonteks">
-                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Tahun Penilaian</label>
-                    <input wire:model="newTahun" type="number" min="2020" max="2099"
-                        class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-                    @error('newTahun')
-                        <p class="mt-1.5 text-sm text-red-400">{{ $message }}</p>
-                    @enderror
-                    <div class="flex gap-3 mt-6">
-                        <button type="button" wire:click="$set('showCreateModal', false)" class="flex-1 rounded-lg border border-slate-600 px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-700 transition-colors cursor-pointer">Batal</button>
-                        <button type="submit" class="flex-1 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-700 transition-all cursor-pointer">Buat</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    @endif
+
 </div>

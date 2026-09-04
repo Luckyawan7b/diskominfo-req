@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\LogoutController;
-use App\Livewire\Admin\Desa\DesaIndex;
+use App\Livewire\Admin\Dinas\DinasIndex;
 use App\Livewire\Admin\ReviewDetail;
 use App\Livewire\Admin\ReviewIndex;
 use App\Livewire\Admin\User\UserIndex;
@@ -16,6 +16,10 @@ use App\Livewire\Risiko\RisikoIndex;
 use App\Livewire\Sasaran\SasaranForm;
 use App\Livewire\StrukturPelaksana\StrukturPelaksanaForm;
 use App\Livewire\Mpn\PerencanaanForm;
+use App\Livewire\Mpn\KonteksIndex as MpnKonteksIndex;
+use App\Livewire\Mpn\PengetahuanIndex;
+use App\Livewire\Mpn\PengumpulanForm;
+use App\Livewire\Mpn\PemanfaatanForm;
 use Illuminate\Support\Facades\Route;
 
 // ─── Guest Routes ─────────────────────────────────────────────────────────────
@@ -25,9 +29,29 @@ Route::middleware('guest')->group(function () {
 
 // ─── Authenticated Routes ─────────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
-    // Dashboard Hub (Launcher 5 Modul)
-    Route::get('/', Dashboard::class)->name('dashboard');
+    // Redirect home based on role
+    Route::get('/', function () {
+        if (auth()->user()->isAdmin()) {
+            return redirect()->route('admin.review.index');
+        }
+        return redirect()->route('layanan.index');
+    })->name('home');
+
     Route::post('/logout', [LogoutController::class, 'destroy'])->name('logout');
+
+    // Deskripsi Layanan
+    Route::get('/layanan/baru', \App\Livewire\Layanan\LayananForm::class)->name('layanan.create');
+    
+    Route::middleware('has_layanan')->group(function () {
+        Route::get('/layanan', \App\Livewire\Layanan\LayananIndex::class)->name('layanan.index');
+        Route::get('/layanan/{layanan}/edit', \App\Livewire\Layanan\LayananForm::class)->name('layanan.edit');
+        Route::get('/layanan/{layanan}/manajemen', Dashboard::class)->name('layanan.dashboard');
+        
+        // --- Existing Dashboard route fallback for compatibility (optional, will be deprecated) ---
+        Route::get('/dashboard', function() {
+            return redirect()->route('layanan.index');
+        })->name('dashboard');
+    });
 
     // Modul Manajemen Risiko (Konteks & Formulir)
     Route::prefix('manajemen-risiko')->group(function () {
@@ -47,21 +71,15 @@ Route::middleware('auth')->group(function () {
 
     // Modul Manajemen Pengetahuan (MPN)
     Route::prefix('manajemen-pengetahuan')->group(function () {
-        Route::get('/', function () {
-            $user = auth()->user();
-            $tahun = date('Y');
-            if ($user->desa_id) {
-                $konteks = \App\Models\MpnKonteks::firstOrCreate(
-                    ['desa_id' => $user->desa_id, 'tahun_penilaian' => $tahun],
-                    ['status' => 'draft', 'created_by' => $user->id]
-                );
-                return redirect()->route('mpn.perencanaan', $konteks->id);
-            }
-            abort(403, 'Anda belum terasosiasi dengan entitas/desa manapun.');
-        })->name('mpn.index');
+        Route::get('/', MpnKonteksIndex::class)->name('mpn.index');
 
         Route::prefix('konteks/{konteks}')->group(function () {
             Route::get('/perencanaan', PerencanaanForm::class)->name('mpn.perencanaan');
+            
+            // Phase 3 & 4 routes
+            Route::get('/pengetahuan', PengetahuanIndex::class)->name('mpn.pengetahuan.index');
+            Route::get('/pengetahuan/{pengetahuan}/pengumpulan', PengumpulanForm::class)->name('mpn.pengumpulan.form');
+            Route::get('/pengetahuan/{pengetahuan}/pemanfaatan', PemanfaatanForm::class)->name('mpn.pemanfaatan.form');
         });
     });
 
@@ -69,7 +87,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/review', ReviewIndex::class)->name('review.index');
         Route::get('/review/{konteks}', ReviewDetail::class)->name('review.detail');
-        Route::get('/desa', DesaIndex::class)->name('desa.index');
+        Route::get('/dinas', DinasIndex::class)->name('dinas.index');
         Route::get('/user', UserIndex::class)->name('user.index');
     });
 });

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Desa;
+use App\Models\Dinas;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 class UserSeeder extends Seeder
 {
     /**
-     * Seed 1 admin (tanpa desa) + 1 operator per desa dummy.
+     * Seed 1 admin (tanpa dinas) + 1 operator per dinas dummy.
      * Jangan jalankan di production.
      */
     public function run(): void
@@ -19,30 +19,30 @@ class UserSeeder extends Seeder
         $adminRole    = Role::where('name', 'admin')->firstOrFail();
         $operatorRole = Role::where('name', 'operator')->firstOrFail();
 
-        // Admin kabupaten — desa_id null (bisa akses semua desa)
+        // Admin kabupaten — dinas_id null (bisa akses semua dinas)
         User::firstOrCreate(
             ['email' => 'admin@diskominfo.test'],
             [
                 'name'     => 'Administrator',
                 'password' => Hash::make('password'),
                 'role_id'  => $adminRole->id,
-                'desa_id'  => null,
+                'dinas_id' => null,
             ]
         );
 
-        // 1 operator per desa
-        $desas = Desa::all();
+        // 1 operator per dinas
+        $dinasList = Dinas::all();
 
-        foreach ($desas as $desa) {
-            $slug = strtolower($desa->kode_desa);
+        foreach ($dinasList as $dinas) {
+            $slug = strtolower($dinas->alias);
 
             User::firstOrCreate(
                 ['email' => "operator.{$slug}@diskominfo.test"],
                 [
-                    'name'     => "Operator {$desa->nama_desa}",
+                    'name'     => "Operator {$dinas->nama_dinas}",
                     'password' => Hash::make('password'),
                     'role_id'  => $operatorRole->id,
-                    'desa_id'  => $desa->id,
+                    'dinas_id' => $dinas->id,
                 ]
             );
         }

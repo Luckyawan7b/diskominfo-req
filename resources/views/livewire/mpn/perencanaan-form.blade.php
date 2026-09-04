@@ -25,6 +25,13 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="mb-4 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 text-sm flex items-center gap-2">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            {{ session('error') }}
+        </div>
+    @endif
+
     {{-- ─── Panduan Singkat ─────────────────────────────────────────────────── --}}
     <div class="mb-6 p-4 rounded-xl border border-blue-500/20 bg-blue-500/5 flex gap-3">
         <svg class="w-5 h-5 text-blue-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -407,12 +414,48 @@
     </div>
 
     {{-- ─── Tambah Layanan Button ──────────────────────────────────────────────── --}}
-    <div class="mt-5 flex items-center gap-4">
-        <button wire:click="addLayanan"
-            class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-dashed border-slate-600 text-sm text-slate-400 hover:text-white hover:border-blue-500/60 hover:bg-blue-500/5 transition-all cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            + Tambah Layanan Baru
-        </button>
-        <span class="text-xs text-slate-500">Setiap layanan bisa memiliki lebih dari satu pengetahuan</span>
-    </div>
+    @if($konteks->status === 'draft')
+        <div class="mt-5 flex items-center gap-4">
+            <button wire:click="addLayanan"
+                class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-dashed border-slate-600 text-sm text-slate-400 hover:text-white hover:border-blue-500/60 hover:bg-blue-500/5 transition-all cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                + Tambah Layanan Baru
+            </button>
+            <span class="text-xs text-slate-500">Setiap layanan bisa memiliki lebih dari satu pengetahuan</span>
+        </div>
+    @endif
+
+    {{-- ─── Finalisasi Section ────────────────────────────────────────────────────── --}}
+    @if($konteks->status === 'draft')
+        <div class="mt-8 p-5 rounded-xl border border-indigo-500/20 bg-indigo-500/5">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-indigo-300 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Finalisasi Form 1
+                    </p>
+                    <p class="text-xs text-slate-400 mt-1">
+                        Setelah semua layanan & pengetahuan disimpan dan sudah benar, klik Finalisasi untuk mengunci Form 1 dan membuka akses ke Form 2 (Pengumpulan).
+                    </p>
+                </div>
+                <button type="button"
+                    wire:click="finalize"
+                    wire:confirm="Apakah Anda yakin ingin memfinalisasi Form 1? Data Layanan & Pengetahuan tidak bisa ditambah/diedit setelah ini."
+                    wire:loading.attr="disabled"
+                    class="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition-all cursor-pointer disabled:opacity-60 shrink-0">
+                    <svg class="w-4 h-4" wire:loading.remove wire:target="finalize" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <svg class="w-4 h-4 animate-spin" wire:loading wire:target="finalize" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    Finalisasi Form 1
+                </button>
+            </div>
+        </div>
+    @else
+        <div class="mt-8 p-5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 flex items-center gap-3">
+            <svg class="w-5 h-5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div>
+                <p class="text-sm font-semibold text-emerald-300">Form 1 sudah difinalisasi</p>
+                <p class="text-xs text-slate-400 mt-0.5">Anda sekarang bisa melanjutkan ke Form 2 (Pengumpulan & Pengelolaan) untuk setiap pengetahuan yang terdaftar.</p>
+            </div>
+        </div>
+    @endif
 </div>

@@ -12,11 +12,11 @@ class MpnKonteks extends Model
     use SoftDeletes;
 
     protected $table = 'mpn_konteks';
-    protected $fillable = ['desa_id', 'tahun_penilaian', 'status', 'created_by'];
+    protected $fillable = ['dinas_id', 'tahun_penilaian', 'status', 'created_by'];
 
-    public function desa(): BelongsTo
+    public function dinas(): BelongsTo
     {
-        return $this->belongsTo(Desa::class);
+        return $this->belongsTo(Dinas::class);
     }
 
     public function creator(): BelongsTo

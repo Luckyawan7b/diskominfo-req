@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Mpn;
 
-use App\Models\Desa;
+use App\Models\Dinas;
 use App\Models\MpnCapaian;
 use App\Models\MpnKonteks;
 use App\Models\MpnLayanan;
@@ -168,30 +168,58 @@ class PerencanaanForm extends Component
 
         // Save Pengetahuan
         foreach ($lData['pengetahuan'] as $pIndex => $pData) {
+            $isCreating = empty($pData['id']);
             $pengetahuan = MpnPengetahuan::updateOrCreate(
                 ['id' => $pData['id'], 'mpn_layanan_id' => $layanan->id],
                 [
-                    'mpn_layanan_id' => $layanan->id,
-                    'nama_pengetahuan' => $pData['nama_pengetahuan'],
-                    'ref_aspek_pemdi_id' => $pData['ref_aspek_pemdi_id'],
-                    'ref_indikator_pemdi_id' => $pData['ref_indikator_pemdi_id'],
-                    'sudah_terdokumentasi' => $pData['sudah_terdokumentasi'],
-                    'tipe_dok_teks' => $pData['tipe_dok_teks'],
-                    'tipe_dok_gambar' => $pData['tipe_dok_gambar'],
-                    'tipe_dok_audio' => $pData['tipe_dok_audio'],
-                    'tipe_dok_video' => $pData['tipe_dok_video'],
-                    'penanggung_jawab_dokumentasi' => $pData['sudah_terdokumentasi'] ? $pData['penanggung_jawab_dokumentasi'] : null,
-                    'target_waktu_dokumentasi' => $pData['sudah_terdokumentasi'] ? $pData['target_waktu_dokumentasi'] : null,
-                    'pemilik_pengetahuan' => !$pData['sudah_terdokumentasi'] ? $pData['pemilik_pengetahuan'] : null,
-                    'urutan' => $pIndex + 1
+                    'mpn_layanan_id'               => $layanan->id,
+                    'nama_pengetahuan'              => $pData['nama_pengetahuan'],
+                    'ref_aspek_pemdi_id'            => $pData['ref_aspek_pemdi_id'],
+                    'ref_indikator_pemdi_id'        => $pData['ref_indikator_pemdi_id'],
+                    'sudah_terdokumentasi'          => $pData['sudah_terdokumentasi'],
+                    'tipe_dok_teks'                 => $pData['tipe_dok_teks'],
+                    'tipe_dok_gambar'               => $pData['tipe_dok_gambar'],
+                    'tipe_dok_audio'                => $pData['tipe_dok_audio'],
+                    'tipe_dok_video'                => $pData['tipe_dok_video'],
+                    'penanggung_jawab_dokumentasi'  => $pData['sudah_terdokumentasi'] ? $pData['penanggung_jawab_dokumentasi'] : null,
+                    'target_waktu_dokumentasi'      => $pData['sudah_terdokumentasi'] ? $pData['target_waktu_dokumentasi'] : null,
+                    'pemilik_pengetahuan'           => !$pData['sudah_terdokumentasi'] ? $pData['pemilik_pengetahuan'] : null,
+                    // On update (not creating), sync status_dokumentasi only if still at initial state
+                    'urutan'                        => $pIndex + 1,
                 ]
             );
-            $this->layanans[$layananIndex]['pengetahuan'][$pIndex]['id'] = $pengetahuan->id;
+
+            // On existing record: keep status_dokumentasi unless already upgraded to 'sudah' via Form 2
+            if (!$isCreating) {
+                $pengetahuan->refresh();
+                // Only update status_dokumentasi if it wasn't already set to 'sudah' by Form 2
+                if ($pengetahuan->status_dokumentasi !== 'sudah') {
+                    $pengetahuan->update([
+                        'status_dokumentasi' => $pData['sudah_terdokumentasi'] ? 'sudah' : 'belum',
+                    ]);
+                }
+            }
+
+            $this->layanans[$layananIndex]['pengetahuan'][$pIndex]['id']               = $pengetahuan->id;
             $this->layanans[$layananIndex]['pengetahuan'][$pIndex]['kode_pengetahuan'] = $pengetahuan->kode_pengetahuan;
         }
 
         session()->flash('success', 'Data Layanan & Pengetahuan berhasil disimpan.');
         $this->loadData(); // reload fresh state
+    }
+
+    public function finalize(): void
+    {
+        // Pastikan ada minimal 1 layanan & 1 pengetahuan sebelum finalisasi
+        $layananCount = $this->konteks->layanan()->count();
+        if ($layananCount === 0) {
+            session()->flash('error', 'Tidak bisa finalisasi: belum ada layanan & pengetahuan yang tersimpan.');
+            return;
+        }
+
+        $this->konteks->update(['status' => 'final']);
+        session()->flash('success', 'Form 1 MPN berhasil difinalisasi. Status sekarang: Final.');
+        $this->loadData();
     }
 
     public function render()

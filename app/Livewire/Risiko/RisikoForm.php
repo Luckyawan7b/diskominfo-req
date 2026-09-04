@@ -70,8 +70,8 @@ class RisikoForm extends Component
             $this->isNew = true;
             $count = $konteks->risiko()->count();
             $this->no = $count + 1;
-            $desa = $konteks->desa;
-            $this->kode_risiko = ($desa->kode_desa ?? 'DSA') . '-R-' . ($count + 1);
+            $dinas = $konteks->dinas;
+            $this->kode_risiko = ($dinas->alias ?? 'DSA') . '-R-' . ($count + 1);
         }
     }
 

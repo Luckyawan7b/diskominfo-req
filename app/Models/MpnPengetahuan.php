@@ -16,7 +16,7 @@ class MpnPengetahuan extends Model
         'ref_aspek_pemdi_id', 'ref_indikator_pemdi_id', 'sudah_terdokumentasi',
         'tipe_dok_teks', 'tipe_dok_gambar', 'tipe_dok_audio', 'tipe_dok_video',
         'penanggung_jawab_dokumentasi', 'target_waktu_dokumentasi',
-        'pemilik_pengetahuan', 'urutan', 'created_by'
+        'pemilik_pengetahuan', 'status_dokumentasi', 'urutan', 'created_by'
     ];
 
     protected $casts = [
@@ -35,16 +35,19 @@ class MpnPengetahuan extends Model
                 if ($layanan) {
                     $konteks = MpnKonteks::find($layanan->mpn_konteks_id);
                     if ($konteks) {
-                        $desa = $konteks->desa;
-                        $kodeDesa = $desa ? $desa->kode_desa : 'UNKNOWN';
-                        $tahun = $konteks->tahun_penilaian;
-                        
+                        $dinas    = $konteks->dinas;
+                        $alias    = $dinas ? $dinas->alias : 'UNKNOWN';
+                        $tahun    = $konteks->tahun_penilaian;
+
                         $count = self::whereHas('layanan', function ($q) use ($konteks) {
                             $q->where('mpn_konteks_id', $konteks->id);
-                        })->count();
-                        
+                        })->withTrashed()->count();
+
                         $urutanStr = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
-                        $model->kode_pengetahuan = "MRP-{$kodeDesa}-{$tahun}-{$urutanStr}";
+                        $model->kode_pengetahuan = "MPN-{$alias}-{$tahun}-{$urutanStr}";
+
+                        // Derive status_dokumentasi from sudah_terdokumentasi
+                        $model->status_dokumentasi = $model->sudah_terdokumentasi ? 'sudah' : 'belum';
                     }
                 }
             }
@@ -69,5 +72,20 @@ class MpnPengetahuan extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function pengumpulan(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(MpnPengumpulan::class, 'mpn_pengetahuan_id');
+    }
+
+    public function pemanfaatans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(MpnPemanfaatan::class, 'mpn_pengetahuan_id');
+    }
+
+    public function alihPengetahuans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(MpnAlihPengetahuan::class, 'mpn_pengetahuan_id');
     }
 }

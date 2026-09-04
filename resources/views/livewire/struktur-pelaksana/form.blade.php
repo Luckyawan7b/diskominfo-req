@@ -28,22 +28,22 @@
         {{-- <div class="p-4 rounded-lg bg-emerald-950/20 border border-emerald-500/20 text-xs text-slate-300 leading-relaxed">
             <p class="font-semibold text-emerald-400 mb-1 flex items-center gap-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Panduan Jabatan untuk Pemerintah Desa:
+                Panduan Jabatan untuk Pemerintah Dinas:
             </p>
-            <p>Struktur pelaksana manajemen risiko di tingkat desa umumnya diisi oleh perangkat desa yang bertugas dalam pengambilan keputusan, koordinasi, dan pelayanan operasional.</p>
+            <p>Struktur pelaksana manajemen risiko di tingkat dinas umumnya diisi oleh perangkat dinas yang bertugas dalam pengambilan keputusan, koordinasi, dan pelayanan operasional.</p>
         </div> --}}
 
         {{-- Pemilik Risiko --}}
         <div>
             <div class="flex items-center justify-between mb-1">
                 <label class="block text-sm font-semibold text-white">1. Pemilik Risiko</label>
-                {{-- <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-emerald-400 font-medium">Umumnya: Kepala Desa / Lurah</span> --}}
+                {{-- <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-emerald-400 font-medium">Umumnya: Kepala Dinas / Lurah</span> --}}
             </div>
             <p class="text-xs text-slate-400 mb-2 leading-relaxed">
                 Diisi dengan nama dan jabatan pimpinan unit kerja pemilik risiko.
             </p>
             <input wire:model="pemilik_risiko" type="text" {{ !$isEditable ? 'disabled' : '' }}
-                placeholder="Contoh: Kepala Desa Sukamaju (H. Ahmad Fauzi)"
+                placeholder="Contoh: Kepala Dinas Sukamaju (H. Ahmad Fauzi)"
                 class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed">
         </div>
 
@@ -51,13 +51,13 @@
         <div>
             <div class="flex items-center justify-between mb-1">
                 <label class="block text-sm font-semibold text-white">2. Koordinator Risiko</label>
-                {{-- <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-amber-400 font-medium">Umumnya: Sekretaris Desa</span> --}}
+                {{-- <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-amber-400 font-medium">Umumnya: Sekretaris Dinas</span> --}}
             </div>
             <p class="text-xs text-slate-400 mb-2 leading-relaxed">
                 Diisi dengan nama dan jabatan pegawai yang mengoordinasikan proses manajemen risiko antar unit kerja. Koordinator bertugas menyusun jadwal, mengkonsolidasikan daftar risiko dari unit kerja, dan memastikan dokumen risiko terintegrasi dalam dokumen perencanaan (RPJMDes/RPJMD, Renstra, RKPDes/RKPD).
             </p>
             <input wire:model="koordinator_risiko" type="text" {{ !$isEditable ? 'disabled' : '' }}
-                placeholder="Contoh: Sekretaris Desa (Budi Santoso, S.AP)"
+                placeholder="Contoh: Sekretaris Dinas (Budi Santoso, S.AP)"
                 class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed">
         </div>
 
@@ -74,7 +74,7 @@
                 placeholder="Contoh:
 1. Kasi Pelayanan (Siti Aminah) - Layanan Administrasi Kependudukan
 2. Kaur Keuangan (Rudi Hartono) - Pengelolaan Keuangan & APBDes
-3. Operator IT / SPBE Desa (Danang) - Pengelolaan Web & Sistem Online" />
+3. Operator IT / SPBE Dinas (Danang) - Pengelolaan Web & Sistem Online" />
         </div>
     </div>
 </div>

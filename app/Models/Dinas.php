@@ -6,27 +6,34 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Desa extends Model
+class Dinas extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'desa';
+    protected $table = 'dinas';
 
     protected $fillable = [
-        'kode_desa',
-        'nama_desa',
-        'kecamatan',
-        'kabupaten',
-        'provinsi',
+        'alias',
+        'nama_dinas',
     ];
 
-    public function konteks(): HasMany
+    public function mrKonteks(): HasMany
     {
         return $this->hasMany(MrKonteks::class);
+    }
+
+    public function mpnKonteks(): HasMany
+    {
+        return $this->hasMany(MpnKonteks::class);
     }
 
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    public function layanans(): HasMany
+    {
+        return $this->hasMany(Layanan::class);
     }
 }

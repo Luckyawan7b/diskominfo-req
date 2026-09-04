@@ -467,7 +467,7 @@
                     </label>
                     <input wire:model="layanan_pendukung" type="text" {{ !$isEditable ? 'disabled' : '' }}
                         class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-50"
-                        placeholder="Contoh: Jaringan internet desa, server/pusat data, aplikasi pelayanan internal">
+                        placeholder="Contoh: Jaringan internet dinas, server/pusat data, aplikasi pelayanan internal">
                 </div>
 
                 <div>
@@ -491,7 +491,7 @@
                     <select wire:model="pemilik_layanan" {{ !$isEditable ? 'disabled' : '' }}
                         class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-50">
                         <option value="">-- Pilih Pemilik Layanan --</option>
-                        <option value="Milik sendiri">Milik sendiri (Desa)</option>
+                        <option value="Milik sendiri">Milik sendiri (Dinas)</option>
                         <option value="Pusat">Pusat (Kementerian/Lembaga)</option>
                         <option value="Instansi lain">Instansi lain (Pemda/OPD Lain)</option>
                     </select>
@@ -537,7 +537,7 @@
                         IPPD Terkait <span class="text-xs text-slate-500 font-normal ml-2">Diisi IPPD yang berkaitan dengan kejadian risiko</span>
                     </label>
                     <x-textarea-auto wire:model="ippd_terkait" rows="4" :disabled="!$isEditable"
-                        placeholder="Contoh: Seluruh Perangkat Daerah / Instansi pengguna layanan TIK desa..." />
+                        placeholder="Contoh: Seluruh Perangkat Daerah / Instansi pengguna layanan TIK dinas..." />
                 </div>
             </div>
 

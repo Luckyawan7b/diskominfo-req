@@ -40,8 +40,8 @@ class EnsureKonteksEditable
         }
 
         // Operator hanya boleh akses konteks desanya sendiri
-        if ($konteks->desa_id !== $user->desa_id) {
-            abort(403, 'Anda tidak memiliki akses ke dokumen desa lain.');
+        if ($konteks->dinas_id !== $user->dinas_id) {
+            abort(403, 'Anda tidak memiliki akses ke dokumen dinas lain.');
         }
 
         return $next($request);

@@ -15,7 +15,8 @@ class MrKonteks extends Model
     protected $table = 'mr_konteks';
 
     protected $fillable = [
-        'desa_id',
+        'dinas_id',
+        'layanan_id',
         'nama_instansi',
         'nama_upr',
         'tugas_upr',
@@ -33,9 +34,14 @@ class MrKonteks extends Model
 
     // ─── Relations ───────────────────────────────────────────────────────────
 
-    public function desa(): BelongsTo
+    public function dinas(): BelongsTo
     {
-        return $this->belongsTo(Desa::class);
+        return $this->belongsTo(Dinas::class);
+    }
+
+    public function layanan(): BelongsTo
+    {
+        return $this->belongsTo(Layanan::class);
     }
 
     public function creator(): BelongsTo

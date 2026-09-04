@@ -44,7 +44,7 @@
                     <div class="flex items-center gap-2.5">
                         <span
                             class="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold shrink-0">{{ $i + 1 }}</span>
-                        <span class="text-sm font-bold text-white tracking-wide">Sasaran UPR / Desa
+                        <span class="text-sm font-bold text-white tracking-wide">Sasaran UPR / Dinas
                             Ke-{{ $i + 1 }}</span>
                     </div>
                     @if ($isEditable)
@@ -61,17 +61,17 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                    {{-- Kolom Sasaran UPR Desa --}}
+                    {{-- Kolom Sasaran UPR Dinas --}}
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
-                            1. Sasaran UPR (Sasaran Desa) <span class="text-red-400">*</span>
+                            1. Sasaran UPR (Sasaran Dinas) <span class="text-red-400">*</span>
                         </label>
                         <p class="text-xs text-slate-400 mb-2">
                             Diisi dengan sasaran UPR yang mendukung sasaran pembangunan nasional.
                         </p>
                         <x-textarea-auto wire:model="blocks.{{ $i }}.sasaran_upr" rows="4"
                             :disabled="!$isEditable"
-                            placeholder="Contoh: Meningkatnya kecepatan dan kemudahan warga dalam pengurusan surat pelayanan administrasi desa secara online." />
+                            placeholder="Contoh: Meningkatnya kecepatan dan kemudahan warga dalam pengurusan surat pelayanan administrasi dinas secara online." />
                     </div>
 
                     {{-- Kolom Sasaran Nasional --}}
@@ -84,7 +84,7 @@
                         </p>
                         <x-textarea-auto wire:model="blocks.{{ $i }}.sasaran_nasional" rows="4"
                             :disabled="!$isEditable"
-                            placeholder="Contoh: Terwujudnya transformasi digital pelayanan publik dan tata kelola desa yang akuntabel." />
+                            placeholder="Contoh: Terwujudnya transformasi digital pelayanan publik dan tata kelola dinas yang akuntabel." />
                     </div>
                 </div>
 
@@ -173,7 +173,7 @@
             <div
                 class="rounded-xl border border-dashed border-slate-700/50 px-4 py-12 text-center text-slate-400 text-sm bg-slate-800/20">
                 <p class="font-medium text-slate-300 mb-1">Belum ada Sasaran UPR yang ditambahkan.</p>
-                <p class="text-xs text-slate-500">Klik tombol di bawah untuk membuat sasaran desa pertama.</p>
+                <p class="text-xs text-slate-500">Klik tombol di bawah untuk membuat sasaran dinas pertama.</p>
             </div>
         @endforelse
     </div>

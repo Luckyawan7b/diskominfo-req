@@ -30,7 +30,7 @@
                 <p class="text-xs text-slate-400 mb-2">Diisi dengan nama instansi yang akan dinilai manajemen risikonya.</p>
                 <input wire:model="nama_instansi" type="text" {{ !$isEditable ? 'disabled' : '' }}
                     class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                    placeholder="Contoh: Pemerintah Desa Sukamaju / Diskominfo Kabupaten">
+                    placeholder="Contoh: Pemerintah Dinas Sukamaju / Diskominfo Kabupaten">
                 @error('nama_instansi') <p class="mt-1 text-sm text-red-400">{{ $message }}</p> @enderror
             </div>
 
@@ -40,7 +40,7 @@
                 <p class="text-xs text-slate-400 mb-2">Diisi dengan nama Unit Pemilik Risiko yang akan dinilai risikonya.</p>
                 <input wire:model="nama_upr" type="text" {{ !$isEditable ? 'disabled' : '' }}
                     class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                    placeholder="Contoh: Pemerintah Desa Sukamaju">
+                    placeholder="Contoh: Pemerintah Dinas Sukamaju">
                 @error('nama_upr') <p class="mt-1 text-sm text-red-400">{{ $message }}</p> @enderror
             </div>
         </div>
@@ -49,7 +49,7 @@
         <div>
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-1.5">
                 <label class="block text-sm font-semibold text-slate-200">Tugas UPR</label>
-                <span class="text-[11px] text-slate-400">Contoh: Melaksanakan pelayanan administrasi kependudukan dan penyelenggaraan sistem desa</span>
+                <span class="text-[11px] text-slate-400">Contoh: Melaksanakan pelayanan administrasi kependudukan dan penyelenggaraan sistem dinas</span>
             </div>
             <p class="text-xs text-slate-400 mb-2">Diisi dengan tugas Unit Pemilik Risiko yang akan dinilai risikonya.</p>
             <x-textarea-auto wire:model="tugas_upr" rows="3" :disabled="!$isEditable"
@@ -60,7 +60,7 @@
         <div>
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-1.5">
                 <label class="block text-sm font-semibold text-slate-200">Fungsi UPR</label>
-                <span class="text-[11px] text-slate-400">Contoh: Pengelolaan arsip desa, penerbitan surat pengantar, pengelolaan web/aplikasi desa</span>
+                <span class="text-[11px] text-slate-400">Contoh: Pengelolaan arsip dinas, penerbitan surat pengantar, pengelolaan web/aplikasi dinas</span>
             </div>
             <p class="text-xs text-slate-400 mb-2">Diisi dengan fungsi Unit Pemilik Risiko yang akan dinilai risikonya.</p>
             <x-textarea-auto wire:model="fungsi_upr" rows="4" :disabled="!$isEditable"
@@ -92,7 +92,7 @@
                         'label' => 'Rendah',
                         'score' => 4,
                         'badge' => 'Skor 1 - 4',
-                        'desc' => 'Desa sangat berhati-hati. Segala potensi kegagalan sekecil apapun pada layanan publik harus segera dimitigasi.',
+                        'desc' => 'Dinas sangat berhati-hati. Segala potensi kegagalan sekecil apapun pada layanan publik harus segera dimitigasi.',
                         'bgActive' => 'bg-emerald-950/40 border-emerald-500/80 text-emerald-300 ring-1 ring-emerald-500/50',
                         'bgDefault' => 'bg-slate-700/30 border-slate-700 hover:border-slate-600 text-slate-300',
                         'dotColor' => 'bg-emerald-400',
@@ -110,7 +110,7 @@
                         'label' => 'Tinggi',
                         'score' => 16,
                         'badge' => 'Skor 10 - 16',
-                        'desc' => 'Siap menghadapi risiko sedang-tinggi demi percepatan program, inovasi digital, atau pembangunan desa.',
+                        'desc' => 'Siap menghadapi risiko sedang-tinggi demi percepatan program, inovasi digital, atau pembangunan dinas.',
                         'bgActive' => 'bg-orange-950/40 border-orange-500/80 text-orange-300 ring-1 ring-orange-500/50',
                         'bgDefault' => 'bg-slate-700/30 border-slate-700 hover:border-slate-600 text-slate-300',
                         'dotColor' => 'bg-orange-400',
